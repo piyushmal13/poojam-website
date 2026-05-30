@@ -1,209 +1,34 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { Terminal } from "../components/terminal/Terminal";
+import { FloatingParticles } from "../components/FloatingParticles";
+import { AtsScanner } from "../components/AtsScanner";
 import { 
-  Cpu, 
+  FileText, 
+  Linkedin, 
   Layers, 
-  ShieldCheck, 
   Activity, 
-  Database, 
-  Globe, 
   ArrowUpRight, 
   Award,
-  ExternalLink,
-  Linkedin,
-  Github,
-  Mail,
-  Zap,
+  Zap, 
+  CheckCircle,
+  MessageSquare,
+  Briefcase,
+  ChevronLeft,
+  ChevronRight,
+  TrendingUp,
+  MapPin,
+  GraduationCap
 } from "lucide-react";
 
-// Floating Particle Component
-const FloatingParticles: React.FC = () => {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    let animId: number;
-    let width = (canvas.width = window.innerWidth);
-    let height = (canvas.height = window.innerHeight);
-
-    const particles: { x: number; y: number; vx: number; vy: number; size: number; opacity: number; color: string }[] = [];
-    const colors = ["rgba(198,162,91,", "rgba(16,185,129,", "rgba(6,182,212,"];
-
-    for (let i = 0; i < 60; i++) {
-      particles.push({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.3,
-        vy: (Math.random() - 0.5) * 0.3,
-        size: Math.random() * 2 + 0.5,
-        opacity: Math.random() * 0.5 + 0.1,
-        color: colors[Math.floor(Math.random() * colors.length)],
-      });
-    }
-
-    const handleResize = () => {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-    };
-    window.addEventListener("resize", handleResize);
-
-    const render = () => {
-      ctx.clearRect(0, 0, width, height);
-      particles.forEach((p) => {
-        p.x += p.vx;
-        p.y += p.vy;
-        if (p.x < 0) p.x = width;
-        if (p.x > width) p.x = 0;
-        if (p.y < 0) p.y = height;
-        if (p.y > height) p.y = 0;
-
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = `${p.color}${p.opacity})`;
-        ctx.fill();
-
-        // Subtle glow
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size * 3, 0, Math.PI * 2);
-        ctx.fillStyle = `${p.color}${p.opacity * 0.15})`;
-        ctx.fill();
-      });
-
-      // Draw connections between nearby particles
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 150) {
-            ctx.beginPath();
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.strokeStyle = `rgba(198,162,91,${0.03 * (1 - dist / 150)})`;
-            ctx.lineWidth = 0.5;
-            ctx.stroke();
-          }
-        }
-      }
-
-      animId = requestAnimationFrame(render);
-    };
-
-    render();
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      cancelAnimationFrame(animId);
-    };
-  }, []);
-
-  return (
-    <canvas
-      ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-0"
-      style={{ opacity: 0.6 }}
-    />
-  );
-};
-
-// Premium Loading Splash Screen
-const LoadingScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
-  const [progress, setProgress] = useState(0);
-  const [phase, setPhase] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setTimeout(onComplete, 400);
-          return 100;
-        }
-        return prev + 2;
-      });
-    }, 30);
-
-    const t1 = setTimeout(() => setPhase(1), 500);
-    const t2 = setTimeout(() => setPhase(2), 1000);
-    const t3 = setTimeout(() => setPhase(3), 1500);
-
-    return () => {
-      clearInterval(interval);
-      clearTimeout(t1);
-      clearTimeout(t2);
-      clearTimeout(t3);
-    };
-  }, [onComplete]);
-
-  return (
-    <div className="fixed inset-0 z-[9999] bg-[#070709] flex flex-col items-center justify-center transition-opacity duration-500"
-      style={{ opacity: progress >= 100 ? 0 : 1, pointerEvents: progress >= 100 ? "none" : "auto" }}
-    >
-      <div className="flex items-center gap-3 mb-8">
-        <div className="h-12 w-12 rounded-xl border border-amber-500/30 bg-amber-500/5 flex items-center justify-center font-serif text-amber-500 font-bold text-2xl select-none loading-logo-pulse">
-          PM
-        </div>
-        <div>
-          <span className="font-bold text-lg tracking-widest text-white block uppercase font-sans">POOJA MALPANI</span>
-          <span className="text-[11px] text-zinc-500 uppercase tracking-widest block font-mono">SYSTEM INITIALIZATION</span>
-        </div>
-      </div>
-
-      <div className="w-64 h-1 bg-zinc-900 rounded-full overflow-hidden mb-4">
-        <div
-          className="h-full bg-gradient-to-r from-amber-500 via-emerald-500 to-cyan-500 transition-all duration-100 ease-out"
-          style={{ width: `${progress}%` }}
-        />
-      </div>
-
-      <div className="space-y-1.5 text-[11px] font-mono text-zinc-500">
-        <div className={`transition-opacity duration-300 ${phase >= 0 ? "opacity-100" : "opacity-0"}`}>
-          <span className="text-emerald-500">✔</span> Connecting to secure infrastructure...
-        </div>
-        <div className={`transition-opacity duration-300 ${phase >= 1 ? "opacity-100" : "opacity-0"}`}>
-          <span className="text-emerald-500">{phase >= 2 ? "✔" : "⚡"}</span> Loading executive telemetry modules...
-        </div>
-        <div className={`transition-opacity duration-300 ${phase >= 2 ? "opacity-100" : "opacity-0"}`}>
-          <span className="text-emerald-500">{phase >= 3 ? "✔" : "⚡"}</span> Initializing CRT rendering engine...
-        </div>
-        <div className={`transition-opacity duration-300 ${phase >= 3 ? "opacity-100" : "opacity-0"}`}>
-          <span className="text-emerald-500">{progress >= 100 ? "✔" : "⚡"}</span> Boot sequence complete.
-        </div>
-      </div>
-    </div>
-  );
-};
-
 export default function Home() {
-  const [telemetryUptime, setTelemetryUptime] = useState("99.9997%");
-  const [systemLoad, setSystemLoad] = useState("0.02%");
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [showContent, setShowContent] = useState(false);
+  const [activeTestimonial, setActiveTestimonial] = useState(0);
+  const [uptimeIndex, setUptimeIndex] = useState("99.9% ATS Pass");
+  const [radarLoad, setRadarLoad] = useState("0.04% Error Rate");
 
-  // Reveal card refs
-  const cardRefs = useRef<(HTMLButtonElement | null)[]>([]);
-
-  // Telemetry updates to simulate active systems
+  // Scroll Reveal Observer
   useEffect(() => {
-    const telemetryInterval = setInterval(() => {
-      const activeUptime = (99.999 + Math.random() * 0.0009).toFixed(5);
-      const activeLoad = (0.01 + Math.random() * 0.05).toFixed(3);
-      setTelemetryUptime(`${activeUptime}%`);
-      setSystemLoad(`${activeLoad}%`);
-    }, 5000);
-
-    return () => clearInterval(telemetryInterval);
-  }, []);
-
-  // Scroll reveal animation observer
-  useEffect(() => {
-    if (!showContent) return;
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -215,324 +40,453 @@ export default function Home() {
       { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
     );
 
-    document.querySelectorAll(".reveal-on-scroll").forEach((el) => observer.observe(el));
+    document.querySelectorAll(".reveal-scroll").forEach((el) => observer.observe(el));
     return () => observer.disconnect();
-  }, [showContent]);
+  }, []);
 
-  // Staggered entrance after loading
-  useEffect(() => {
-    if (isLoaded) {
-      setTimeout(() => setShowContent(true), 100);
-    }
-  }, [isLoaded]);
-
-  const triggerCardCommand = (command: string) => {
-    const event = new CustomEvent("terminal:autotype", {
-      detail: { command }
-    });
-    window.dispatchEvent(event);
-  };
-
-  const cardData = [
+  const testimonials = [
     {
-      id: "card-arch-audit",
-      title: "Enterprise Architecture Review",
-      desc: "Audit distributed structures, discover pipeline friction, and trace API scale barriers.",
-      cmd: "skills",
-      icon: Layers,
-      color: "text-amber-400 bg-amber-500/5 border-amber-500/10"
+      name: "Rajat Thakur",
+      role: "Sr Magento Architect",
+      keywords: "Php | Magento | Laravel | Shopify",
+      quote: "It was an exceptionally great experience while working with Pooja. She has an elite understanding of executive tech keywords and structure.",
+      rating: "5.0 / 5.0 Rated",
     },
     {
-      id: "card-system-modern",
-      title: "Event-Driven System Strategy",
-      desc: "Examine engineering roadmap telemetry and structure vertical transition schedules.",
-      cmd: "experience",
-      icon: Cpu,
-      color: "text-emerald-400 bg-emerald-500/5 border-emerald-500/10"
-    },
-    {
-      id: "card-ats-analyzer",
-      title: "Interactive ATS Resume Scan",
-      desc: "Feed engineering credentials into our parser engine to check ATS compatibility index.",
-      cmd: "ats",
-      icon: ShieldCheck,
-      color: "text-cyan-400 bg-cyan-500/5 border-cyan-500/10"
-    },
-    {
-      id: "card-inquiry-wizard",
-      title: "Direct Secure Contact Portal",
-      desc: "Initiate visual dialogue wizard to log operational queries & transmit inbox logs.",
-      cmd: "contact",
-      icon: Globe,
-      color: "text-purple-400 bg-purple-500/5 border-purple-500/10"
+      name: "Amit M.",
+      role: "Lighting Sales & Channel Management",
+      keywords: "B2B Market | Security Systems | Team Building",
+      quote: "Recruiting agencies prefer resumes designed properly which their softwares can read. For ATS enabled or supported Resumes Pooja can help you in the same. Pooja is a good Resume Maker and has experience in making your resume more meaningful!",
+      rating: "5.0 / 5.0 Rated",
     }
   ];
 
+  const handleNextTestimonial = () => {
+    setActiveTestimonial((prev) => (prev + 1) % testimonials.length);
+  };
+
+  const handlePrevTestimonial = () => {
+    setActiveTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+  };
+
+  const scrollToGrader = () => {
+    const element = document.getElementById("ats-grader-section");
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  const getWhatsAppAdvisoryLink = () => {
+    const message = encodeURIComponent("Hi Pooja! I visited your website and would love to book a professional career branding & ATS resume consultation session with you.");
+    return `https://wa.me/919923649723?text=${message}`;
+  };
+
   return (
     <>
-      {/* Loading Splash Screen */}
-      {!isLoaded && <LoadingScreen onComplete={() => setIsLoaded(true)} />}
-
-      <div className={`min-h-screen bg-[#070709] text-zinc-100 flex flex-col font-sans relative overflow-hidden selection:bg-amber-500/30 selection:text-white transition-opacity duration-700 ${showContent ? "opacity-100" : "opacity-0"}`}>
+      <div className="min-h-screen bg-[#030303] text-zinc-100 flex flex-col font-sans relative overflow-hidden selection:bg-emerald-500/30 selection:text-white">
         
-        {/* Floating Particles Background */}
+        {/* Animated Particles background */}
         <FloatingParticles />
 
-        {/* Visual background grids & ambient radial highlights */}
-        <div className="absolute inset-0 luxury-grid opacity-35 pointer-events-none" />
-        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-emerald-500/5 blur-[120px] pointer-events-none" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-amber-500/5 blur-[120px] pointer-events-none" />
+        {/* Ambient Spots */}
+        <div className="absolute top-[10%] left-[-10%] w-[60%] h-[60%] rounded-full ambient-glow-1 blur-[130px] pointer-events-none" />
+        <div className="absolute bottom-[20%] right-[-15%] w-[60%] h-[60%] rounded-full ambient-glow-2 blur-[130px] pointer-events-none" />
+        <div className="absolute top-[50%] left-[20%] w-[50%] h-[50%] rounded-full ambient-glow-3 blur-[140px] pointer-events-none" />
+        <div className="absolute inset-0 apple-grid opacity-35 pointer-events-none z-0" />
 
-        {/* Premium Header/Navigation Bar */}
-        <header className="relative z-30 border-b border-zinc-900 bg-zinc-950/60 backdrop-blur-md px-6 py-4 animate-slide-down">
+        {/* Apple-Style Navigation Bar */}
+        <header className="relative z-30 border-b border-white/5 bg-black/40 backdrop-blur-xl px-6 py-4 animate-header">
           <div className="max-w-7xl mx-auto flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="h-9 w-9 rounded-lg border border-amber-500/20 bg-amber-500/5 flex items-center justify-center font-serif text-amber-500 font-bold text-lg select-none hover:bg-amber-500/10 transition-colors">
-                PM
+              <div className="h-9 w-9 rounded-xl border border-emerald-500/30 bg-emerald-500/5 flex items-center justify-center font-bold text-emerald-400 font-serif text-lg select-none hover:bg-emerald-500/10 transition-all shadow-[0_0_15px_rgba(16,185,129,0.1)]">
+                PC
               </div>
               <div>
-                <span className="font-bold text-sm tracking-widest text-white block uppercase">POOJA MALPANI</span>
-                <span className="text-[10px] text-zinc-500 uppercase tracking-widest block font-medium">EXECUTIVE TELEMETRY SYSTEM</span>
+                <span className="font-bold text-sm tracking-wider text-white block uppercase">POOJA CHANDAK</span>
+                <span className="text-[10px] text-zinc-500 uppercase tracking-widest block font-mono font-bold">Career Branding Platform</span>
               </div>
             </div>
 
             <div className="hidden md:flex items-center gap-6 text-xs font-mono text-zinc-400">
-              <span className="flex items-center gap-1.5 bg-zinc-900/60 px-3 py-1 rounded-full border border-zinc-800/80 hover:border-zinc-700 transition-colors">
+              <span className="flex items-center gap-1.5 bg-zinc-900/40 px-3 py-1 rounded-full border border-white/5">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                NODE STATUS: SECURE
+                ACTIVE AUDITS: LIVE
               </span>
-              <span className="flex items-center gap-1.5 bg-zinc-900/60 px-3 py-1 rounded-full border border-zinc-800/80">
-                UPTIME: <span className="text-zinc-200">{telemetryUptime}</span>
+              <span className="flex items-center gap-1.5 bg-zinc-900/40 px-3 py-1 rounded-full border border-white/5">
+                SCORE RATIO: <span className="text-zinc-200">{uptimeIndex}</span>
               </span>
-              <span className="flex items-center gap-1.5 bg-zinc-900/60 px-3 py-1 rounded-full border border-zinc-800/80">
-                LOAD: <span className="text-zinc-200">{systemLoad}</span>
+              <span className="flex items-center gap-1.5 bg-zinc-900/40 px-3 py-1 rounded-full border border-white/5">
+                SCAN LIMIT: <span className="text-zinc-200">Unlimited</span>
               </span>
             </div>
 
             <div className="flex items-center gap-3">
-              {/* Social Links */}
-              <div className="hidden sm:flex items-center gap-1.5">
-                <a
-                  href="https://linkedin.com/in/poojamalpani"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="social-icon-btn"
-                  title="LinkedIn"
-                  id="social-linkedin"
-                >
-                  <Linkedin className="h-3.5 w-3.5" />
-                </a>
-                <a
-                  href="https://github.com/poojamalpani"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="social-icon-btn"
-                  title="GitHub"
-                  id="social-github"
-                >
-                  <Github className="h-3.5 w-3.5" />
-                </a>
-                <a
-                  href="mailto:pooja@malpani.dev"
-                  className="social-icon-btn"
-                  title="Email"
-                  id="social-email"
-                >
-                  <Mail className="h-3.5 w-3.5" />
-                </a>
-              </div>
+              <a
+                href="https://www.linkedin.com/in/pooja-chandak-0b409a52/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hidden sm:flex h-8 w-8 rounded-lg border border-white/10 hover:border-emerald-500/30 items-center justify-center bg-zinc-950/40 text-zinc-400 hover:text-emerald-400 transition-all"
+                title="LinkedIn Profile"
+                id="header-linkedin"
+              >
+                <Linkedin className="h-3.5 w-3.5" />
+              </a>
 
               <button
-                onClick={() => triggerCardCommand("contact")}
-                id="cta-book-session"
-                className="flex items-center gap-1.5 rounded-lg border border-amber-500/30 bg-amber-500/5 px-4 py-1.5 text-xs font-mono text-amber-400 hover:bg-amber-500/10 hover:border-amber-500/50 transition-all cursor-pointer group"
+                onClick={scrollToGrader}
+                id="header-cta"
+                className="flex items-center gap-1.5 rounded-xl border border-emerald-500/40 bg-emerald-500/5 hover:bg-emerald-500/10 px-4 py-2 text-xs font-mono font-bold text-emerald-400 cursor-pointer transition-all whatsapp-glow"
               >
-                <Zap className="h-3 w-3 group-hover:animate-pulse" />
-                <span>BOOK ADVISORY</span>
-                <ArrowUpRight className="h-3 w-3" />
+                <Zap className="h-3.5 w-3.5 text-emerald-400" />
+                <span>FREE RESUME SCAN</span>
               </button>
             </div>
           </div>
         </header>
 
-        {/* Main Layout Area */}
-        <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-8 relative z-20 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Main Body */}
+        <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-12 relative z-20 space-y-24">
           
-          {/* Left Column: Mission, Bio, and Capability triggers */}
-          <section className="lg:col-span-5 space-y-8 lg:pr-4">
-            
-            <div className="space-y-4 reveal-on-scroll" style={{ transitionDelay: "0.1s" }}>
-              <div className="inline-flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded-full px-3 py-1 text-[11px] font-mono uppercase tracking-wider">
-                <Award className="h-3 w-3" />
-                <span>Board-Level Tech Specialist</span>
+          {/* Section 1: Apple-style Hero */}
+          <section className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center pt-4 sm:pt-8">
+            <div className="lg:col-span-7 space-y-6 text-left">
+              <div className="reveal-scroll inline-flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-full px-3 py-1 text-[11px] font-mono uppercase tracking-wider font-bold">
+                <Award className="h-3.5 w-3.5" />
+                <span>13+ Years of Resume Strategy</span>
               </div>
-              
-              <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-white font-serif leading-tight">
-                Unlocking <br />
-                <span className="text-gradient-gold">Competitive Authority</span> <br />
-                At Scale.
+
+              <h1 className="reveal-scroll text-4xl sm:text-6xl font-bold tracking-tight text-white leading-[1.08] font-serif">
+                Elevate Your <br />
+                <span className="text-gradient-emerald-cyan">Professional Identity.</span> <br />
+                Pass Every ATS Scan.
               </h1>
+
+              <p className="reveal-scroll text-sm sm:text-base text-zinc-400 leading-relaxed max-w-xl">
+                In high-velocity recruitment markets, simple achievements get filtered out by AI scanner models. 
+                Pooja Chandak crafts premium, keyword-optimized, metric-driven resumes that bypass automated filters 
+                and seize the absolute attention of executive decision makers.
+              </p>
+
+              <div className="reveal-scroll flex flex-col sm:flex-row gap-4 pt-2">
+                <button
+                  onClick={scrollToGrader}
+                  className="px-6 py-4 rounded-xl bg-emerald-400 hover:bg-emerald-300 font-mono text-xs font-bold text-black uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer shadow-[0_5px_25px_-5px_rgba(16,185,129,0.4)]"
+                >
+                  <Zap className="h-4 w-4" />
+                  <span>Scan Resume Free</span>
+                </button>
+                <a
+                  href={getWhatsAppAdvisoryLink()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-6 py-4 rounded-xl border border-white/10 hover:border-emerald-500/30 hover:bg-emerald-500/5 font-mono text-xs font-bold text-zinc-300 hover:text-emerald-400 uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer transition-all"
+                >
+                  <MessageSquare className="h-4 w-4" />
+                  <span>Direct Consultation</span>
+                </a>
+              </div>
+            </div>
+
+            {/* Right Side: Animated Mockup Array (Apple Floating Mockup) */}
+            <div className="lg:col-span-5 relative flex flex-col items-center justify-center">
+              <div className="absolute w-[120%] h-[120%] bg-radial from-emerald-500/5 to-transparent blur-[100px] pointer-events-none" />
               
-              <p className="text-sm sm:text-base text-zinc-400 leading-relaxed font-sans max-w-lg">
-                Technology in high-velocity businesses isn&apos;t just operational infrastructure—it is strategic leverage. 
-                Pooja Malpani provides executive architecture audits, team re-scaling plans, and core code 
-                modernizations that drive enterprise valuation.
+              <div className="relative w-full max-w-sm space-y-4">
+                
+                {/* Floating Mockup Card 1 */}
+                <div className="animate-float p-5 rounded-2xl apple-glass border border-white/10 shadow-2xl relative z-10">
+                  <div className="flex items-center justify-between border-b border-white/5 pb-3 mb-3">
+                    <div className="flex items-center gap-2">
+                      <div className="h-7 w-7 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                        <FileText className="h-4 w-4" />
+                      </div>
+                      <span className="font-mono text-[10px] font-bold text-zinc-400">ATS COMPLIANT MODEL</span>
+                    </div>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">98% MATCH</span>
+                  </div>
+                  <div className="space-y-2 text-[10.5px] font-mono text-zinc-500">
+                    <div className="text-white font-bold font-sans text-sm">Rajat Thakur — Sr Magento Architect</div>
+                    <div className="flex gap-2 text-[9px] text-emerald-400 mt-1">
+                      <span>✓ Php / Laravel</span>
+                      <span>✓ API Optimization</span>
+                      <span>✓ Metric Scale</span>
+                    </div>
+                    <p className="mt-2 text-zinc-400 leading-relaxed font-sans">Optimized complex core database streams resulting in a 35% performance enhancement under high load limits.</p>
+                  </div>
+                </div>
+
+                {/* Floating Mockup Card 2 (Offset/Delayed) */}
+                <div className="animate-float-delayed p-5 rounded-2xl apple-glass border border-white/5 shadow-2xl relative translate-x-4 sm:translate-x-8 z-0">
+                  <div className="flex items-center justify-between border-b border-white/5 pb-3 mb-3">
+                    <div className="flex items-center gap-2">
+                      <div className="h-7 w-7 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
+                        <TrendingUp className="h-4 w-4" />
+                      </div>
+                      <span className="font-mono text-[10px] font-bold text-zinc-400">EXECUTIVE BIO MATRIX</span>
+                    </div>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-bold">SWOT COMPLIANT</span>
+                  </div>
+                  <div className="space-y-2 text-[10.5px] font-mono text-zinc-500">
+                    <div className="text-white font-bold font-sans text-sm">Amit M. — Lighting Channel Director</div>
+                    <div className="flex gap-2 text-[9px] text-cyan-400 mt-1">
+                      <span>✓ B2B Sales</span>
+                      <span>✓ Team Re-Scaling</span>
+                      <span>✓ Multi-Region Channels</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </section>
+
+          {/* Section 2: Pooja's Executive Profile Card */}
+          <section className="reveal-scroll max-w-4xl mx-auto apple-glass rounded-3xl p-6 sm:p-8 border border-white/5 relative">
+            <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-emerald-500 via-cyan-500 to-transparent" />
+            
+            <div className="flex flex-col md:flex-row items-center gap-8">
+              <div className="relative h-32 w-32 shrink-0 rounded-full overflow-hidden border-2 border-emerald-500/30 shadow-[0_0_30px_rgba(16,185,129,0.2)]">
+                {/* Visual Placeholder for headshot with high-end abstract initial ring */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-emerald-500/20 via-zinc-950 to-cyan-500/20 flex items-center justify-center text-white font-serif text-4xl font-bold select-none">
+                  PC
+                </div>
+              </div>
+
+              <div className="space-y-4 text-center md:text-left flex-1">
+                <div>
+                  <h2 className="text-2xl font-bold text-white tracking-tight">Pooja Chandak</h2>
+                  <p className="text-emerald-400 font-mono text-xs mt-1 uppercase tracking-wider font-bold">
+                    ATS Resume Writer · Career Branding Expert · Cover Letter Specialist
+                  </p>
+                </div>
+
+                <p className="text-zinc-400 text-xs sm:text-sm leading-relaxed font-sans">
+                  With over <strong>13+ years of professional freelance experience</strong>, I specialize in transforming raw professional histories into highly focused, machine-readable career stories. Having studied Master of Management Studies (Finance) and holding certificates in Cooperative Audits from the Government of Maharashtra, I apply strict analytical methodologies to optimize resumes across diverse sectors including IT, Finance, Operations, Sales, Marketing, and Healthcare.
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs font-mono text-zinc-300">
+                  <div className="flex items-center justify-center md:justify-start gap-2">
+                    <MapPin className="h-4 w-4 text-emerald-400 shrink-0" />
+                    <span>Mumbai, Maharashtra, India</span>
+                  </div>
+                  <div className="flex items-center justify-center md:justify-start gap-2">
+                    <GraduationCap className="h-4 w-4 text-emerald-400 shrink-0" />
+                    <span>MMS Finance · NCRD Sterling Institute</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Section 3: Interactive Grader Embed */}
+          <section id="ats-grader-section" className="reveal-scroll py-8">
+            <div className="text-center max-w-2xl mx-auto mb-10 space-y-3">
+              <span className="text-[11px] font-mono text-emerald-400 font-bold uppercase tracking-widest block">Core Telemetry Audit</span>
+              <h2 className="text-3xl sm:text-4xl font-bold text-white font-serif tracking-tight">Scan Your Resume Plain Text</h2>
+              <p className="text-zinc-400 text-xs leading-relaxed max-w-lg mx-auto">
+                Bypass recruiter filters. Our scanner calculates your match index in 10 seconds and identifies critical structural alignment gaps.
               </p>
             </div>
 
-            {/* Profile Card with Headshot */}
-            <div className="reveal-on-scroll flex items-center gap-4 p-4 rounded-xl border border-zinc-800/60 bg-zinc-950/40 backdrop-blur-sm" style={{ transitionDelay: "0.2s" }}>
-              <div className="relative h-16 w-16 shrink-0 rounded-full overflow-hidden border-2 border-amber-500/30 headshot-glow">
-                <Image
-                  src="/pooja-headshot.png"
-                  alt="Pooja Malpani — Executive Technology Advisor"
-                  fill
-                  className="object-cover"
-                  priority
-                />
-              </div>
-              <div>
-                <div className="font-bold text-white text-sm">Pooja Malpani</div>
-                <div className="text-[11px] text-zinc-500 font-mono">CTO Specialist · Architecture Advisor</div>
-                <div className="flex items-center gap-2 mt-1.5">
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">12+ Years</span>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400">Fortune 500</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Interactive Credential / Autotype Trigger Cards */}
-            <div className="space-y-4">
-              <h2 className="text-xs font-mono uppercase tracking-widest text-zinc-500 font-bold reveal-on-scroll" style={{ transitionDelay: "0.3s" }}>
-                Core Advising Protocols (Click to run audit)
-              </h2>
-
-              <div className="grid grid-cols-1 gap-3">
-                {cardData.map((card, index) => {
-                  const Icon = card.icon;
-                  return (
-                    <button
-                      key={card.id}
-                      id={card.id}
-                      ref={(el) => { cardRefs.current[index] = el; }}
-                      onClick={() => triggerCardCommand(card.cmd)}
-                      className="reveal-on-scroll w-full text-left p-4 rounded-xl border bg-zinc-950/40 hover:bg-zinc-900/40 hover:border-zinc-800 transition-all scale-on-hover luxury-glow cursor-pointer relative group flex gap-4 border-zinc-900"
-                      style={{ transitionDelay: `${0.35 + index * 0.1}s` }}
-                    >
-                      <div className={`h-10 w-10 shrink-0 rounded-lg flex items-center justify-center border ${card.color}`}>
-                        <Icon className="h-5 w-5" />
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-1.5 font-bold text-white text-sm">
-                          <span>{card.title}</span>
-                          <ArrowUpRight className="h-3.5 w-3.5 text-zinc-500 group-hover:text-amber-400 transition-colors" />
-                        </div>
-                        <p className="text-zinc-400 text-xs mt-1 leading-relaxed">{card.desc}</p>
-                        <div className="mt-2 inline-flex items-center gap-1 text-[10px] font-mono text-amber-500/70 group-hover:text-amber-500 transition-colors uppercase">
-                          <span>Execute command:</span>
-                          <span className="bg-zinc-900 px-1.5 py-0.5 rounded border border-zinc-800 text-zinc-300 font-bold group-hover:border-amber-500/20">{card.cmd}</span>
-                        </div>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-            
+            <AtsScanner />
           </section>
 
-          {/* Right Column: Physical CRT Chassis enclosing the Terminal */}
-          <section className="lg:col-span-7 flex flex-col items-stretch">
-            
-            <div className="text-center sm:text-left mb-3 reveal-on-scroll" style={{ transitionDelay: "0.15s" }}>
-              <span className="text-xs font-mono uppercase tracking-widest text-zinc-500 font-bold">
-                Interactive Mainframe Node console
-              </span>
-            </div>
-
-            {/* Physical CRT Bezel Frame Structure */}
-            <div className="reveal-on-scroll relative p-2 sm:p-3 rounded-3xl border border-zinc-800 bg-gradient-to-b from-[#18181b] to-[#0c0c0e] shadow-[0_30px_100px_-20px_rgba(0,0,0,0.85)]" style={{ transitionDelay: "0.2s" }}>
-              
-              {/* Visual chassis details (metallic shine, screws, vent grilles) */}
-              <div className="absolute top-2 left-6 h-1.5 w-16 bg-zinc-900/60 rounded-full border border-zinc-800/40" />
-              <div className="absolute top-2 right-6 h-1.5 w-16 bg-zinc-900/60 rounded-full border border-zinc-800/40" />
-              
-              {/* Top Vent slats */}
-              <div className="flex justify-center gap-1 mb-2 mt-1">
-                {[...Array(6)].map((_, i) => (
-                  <div key={i} className="h-1 w-8 rounded-full bg-zinc-900/80 border-t border-black" />
-                ))}
-              </div>
-
-              {/* Terminal React Instance */}
-              <div className="relative">
-                <Terminal />
-              </div>
-
-              {/* Visual Hardware Telemetry and Screen Housing Controls */}
-              <div className="mt-4 px-4 py-2 border border-zinc-900 bg-zinc-950/80 rounded-xl flex items-center justify-between text-[11px] font-mono text-zinc-500">
-                <div className="flex items-center gap-3">
-                  <span className="flex h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span>
-                  <span>BAUD REGULATION: active</span>
+          {/* Section 4: Stats Grid */}
+          <section className="reveal-scroll grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              { val: "13+ Years", label: "FREELANCE EXPERIENCE", desc: "Crafting optimized CVs since Dec 2012" },
+              { val: "Hundreds", label: "CAREERS ELEVATED", desc: "From entry freshers to C-Suite directors" },
+              { val: "5.0 / 5.0", label: "CLIENT RATING INDEX", desc: "100% satisfactory keyword optimization" }
+            ].map((stat, i) => (
+              <div key={i} className="apple-glass rounded-2xl p-6 border border-white/5 hover:border-emerald-500/10 transition-all flex flex-col justify-between h-36">
+                <div className="flex justify-between items-center">
+                  <span className="text-[10px] font-mono text-zinc-500 font-bold uppercase tracking-wider">{stat.label}</span>
+                  <Activity className="h-4 w-4 text-emerald-500/60" />
                 </div>
-                <div className="flex items-center gap-4">
-                  <span>VOLTAGE: ~1.05V</span>
-                  <span className="hidden sm:inline">PINGS: 12ms</span>
+                <div>
+                  <div className="text-3xl font-bold text-white tracking-tight leading-none mb-1.5">{stat.val}</div>
+                  <p className="text-zinc-400 text-[11px] font-sans leading-relaxed">{stat.desc}</p>
                 </div>
               </div>
-              
+            ))}
+          </section>
+
+          {/* Section 5: Services */}
+          <section className="reveal-scroll space-y-12">
+            <div className="text-center max-w-2xl mx-auto space-y-3">
+              <span className="text-[11px] font-mono text-emerald-400 font-bold uppercase tracking-widest block">Signature Advisory Protocols</span>
+              <h2 className="text-3xl sm:text-4xl font-bold text-white font-serif tracking-tight">Elite Career Branding Tiers</h2>
+              <p className="text-zinc-400 text-xs leading-relaxed max-w-lg mx-auto">
+                Tailored systems to elevate your professional presence, build powerful networks, and land target corporate interviews.
+              </p>
             </div>
 
-            {/* Core Quantitative Business Stats */}
-            <div className="grid grid-cols-3 gap-3 mt-6 reveal-on-scroll" style={{ transitionDelay: "0.35s" }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {[
-                { label: "SYS UP-TIME INDEX", val: telemetryUptime, icon: Activity },
-                { label: "SCALE LIMITS MET", val: "10M+ RPS", icon: Database },
-                { label: "DILIGENCE VALUE AUDITED", val: "$1.2B+", icon: Globe }
-              ].map((stat, i) => {
-                const Icon = stat.icon;
-                return (
-                  <div key={i} className="bg-zinc-950/30 border border-zinc-900 rounded-xl p-3 flex flex-col justify-between h-20 relative hover:border-zinc-800 transition-colors stat-card-hover">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[9px] font-mono text-zinc-500 uppercase tracking-wider font-bold">{stat.label}</span>
-                      <Icon className="h-3.5 w-3.5 text-zinc-600" />
-                    </div>
-                    <span className="text-base font-bold text-white tracking-tight mt-1">{stat.val}</span>
+                {
+                  title: "ATS Resume Writing",
+                  desc: "Drafting optimized resumes with strict keywords, results-oriented action verbs, and customizable formatting that softwares can read seamlessly.",
+                  badge: "Core Service",
+                  color: "text-emerald-400 bg-emerald-500/5 border-emerald-500/10"
+                },
+                {
+                  title: "LinkedIn Optimization",
+                  desc: "Reconstructing headlines, about profiles, and experience listings to trigger recruiter search algorithms and drive direct inbound job opportunities.",
+                  badge: "Highly Requested",
+                  color: "text-cyan-400 bg-cyan-500/5 border-cyan-500/10"
+                },
+                {
+                  title: "Cover Letter Structuring",
+                  desc: "Creating high-impact personalized value propositions targeted specifically to company needs, ensuring high response rates.",
+                  badge: "Conversion Booster",
+                  color: "text-amber-400 bg-amber-500/5 border-amber-500/10"
+                },
+                {
+                  title: "Google Business Verification",
+                  desc: "Assisting entrepreneurs and business owners to successfully register, set up, verify, and index their localized Google Business parameters.",
+                  badge: "Bonus Service",
+                  color: "text-purple-400 bg-purple-500/5 border-purple-500/10"
+                }
+              ].map((serv, i) => (
+                <div key={i} className="apple-glass rounded-2xl p-6 border border-white/5 hover:border-emerald-500/10 transition-all flex flex-col justify-between h-64 scale-hover apple-glass-hover">
+                  <div className="space-y-3">
+                    <span className={`inline-block text-[9px] font-mono px-2 py-0.5 rounded-full border ${serv.color}`}>
+                      {serv.badge}
+                    </span>
+                    <h3 className="text-white font-bold text-base tracking-tight">{serv.title}</h3>
+                    <p className="text-zinc-400 text-xs leading-relaxed font-sans">{serv.desc}</p>
                   </div>
-                );
-              })}
+                  <a
+                    href={getWhatsAppAdvisoryLink()}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-4 flex items-center gap-1 text-[10px] font-mono font-bold text-emerald-400 uppercase hover:text-emerald-300 transition-colors"
+                  >
+                    <span>Request Tier</span>
+                    <ArrowUpRight className="h-3 w-3" />
+                  </a>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Section 6: Interactive Testimonials Slider */}
+          <section className="reveal-scroll max-w-4xl mx-auto space-y-8">
+            <div className="text-center space-y-2">
+              <span className="text-[11px] font-mono text-emerald-400 font-bold uppercase tracking-widest block">Client Endorsements</span>
+              <h2 className="text-2xl sm:text-3xl font-bold text-white font-serif">Shortlisted Success Stories</h2>
             </div>
 
+            <div className="relative apple-glass rounded-3xl p-6 sm:p-8 border border-white/5 min-h-64 flex flex-col justify-between">
+              <div className="absolute top-2 left-6 h-1 w-12 bg-zinc-900 rounded-full border border-white/5" />
+              
+              <div className="py-4 space-y-4 animate-fade-in" key={activeTestimonial}>
+                <div className="text-xs font-mono text-emerald-400 font-bold uppercase tracking-widest border border-emerald-500/20 bg-emerald-500/5 px-2.5 py-0.5 rounded-full inline-block">
+                  {testimonials[activeTestimonial].rating}
+                </div>
+                <blockquote className="text-white font-serif text-base sm:text-lg italic leading-relaxed">
+                  &ldquo;{testimonials[activeTestimonial].quote}&rdquo;
+                </blockquote>
+                <div className="space-y-1">
+                  <div className="font-bold text-sm text-white">{testimonials[activeTestimonial].name}</div>
+                  <div className="text-[11px] text-zinc-500 font-mono">
+                    {testimonials[activeTestimonial].role} · <span className="text-zinc-600">{testimonials[activeTestimonial].keywords}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between border-t border-white/5 pt-4 mt-4">
+                <div className="flex gap-1.5">
+                  {testimonials.map((_, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setActiveTestimonial(idx)}
+                      className={`h-1.5 w-6 rounded-full transition-all cursor-pointer ${
+                        idx === activeTestimonial ? "bg-emerald-400" : "bg-zinc-800"
+                      }`}
+                    />
+                  ))}
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={handlePrevTestimonial}
+                    className="h-8 w-8 rounded-lg border border-white/5 hover:border-white/15 flex items-center justify-center text-zinc-400 hover:text-white cursor-pointer bg-zinc-950/40"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={handleNextTestimonial}
+                    className="h-8 w-8 rounded-lg border border-white/5 hover:border-white/15 flex items-center justify-center text-zinc-400 hover:text-white cursor-pointer bg-zinc-950/40"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
           </section>
+
+          {/* Section 7: Conversational Closing Call to Action Banner */}
+          <section className="reveal-scroll max-w-5xl mx-auto rounded-3xl bg-gradient-to-r from-emerald-500/10 via-cyan-500/5 to-transparent border border-white/5 p-8 sm:p-12 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="absolute top-[-10%] right-[-10%] w-64 h-64 bg-emerald-500/10 rounded-full blur-[80px] pointer-events-none" />
+            
+            <div className="space-y-4 max-w-xl text-center md:text-left">
+              <h2 className="text-3xl font-bold text-white tracking-tight font-serif leading-tight">
+                Ready to Stop Waiting <br />
+                and Start Getting Shortlisted?
+              </h2>
+              <p className="text-zinc-400 text-xs sm:text-sm leading-relaxed">
+                Connect with professional resume writer Pooja Chandak. Get diagnostic SWOT evaluations, custom MS Word editable ATS designs, and professional career story mapping.
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-4 shrink-0 w-full md:w-auto justify-center">
+              <a
+                href={getWhatsAppAdvisoryLink()}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-6 py-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black font-mono text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer shadow-lg whatsapp-glow"
+              >
+                <MessageSquare className="h-4 w-4 fill-black" />
+                <span>Book Advisory Session</span>
+              </a>
+              <button
+                onClick={scrollToGrader}
+                className="px-6 py-4 rounded-xl border border-white/10 hover:border-emerald-500/30 hover:bg-emerald-500/5 font-mono text-xs font-bold text-zinc-300 hover:text-emerald-400 uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer transition-all"
+              >
+                <Zap className="h-4 w-4" />
+                <span>Scan Resume</span>
+              </button>
+            </div>
+          </section>
+
         </main>
 
-        {/* Fine-Print Footer */}
-        <footer className="relative z-30 border-t border-zinc-900/60 bg-zinc-950/30 py-6 mt-16 px-6 text-center text-xs font-mono text-zinc-500">
+        {/* Apple-Style Elegant Footer */}
+        <footer className="relative z-30 border-t border-white/5 bg-zinc-950/20 py-8 px-6 text-center text-xs font-mono text-zinc-500">
           <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p>© 2026 Pooja Malpani Advisory. Built with Next.js & engineered for excellence.</p>
-            <div className="flex items-center gap-4">
-              {/* Mobile Social Links */}
-              <div className="flex sm:hidden items-center gap-2 mr-2">
-                <a href="https://linkedin.com/in/poojamalpani" target="_blank" rel="noopener noreferrer" className="social-icon-btn" title="LinkedIn">
-                  <Linkedin className="h-3 w-3" />
-                </a>
-                <a href="https://github.com/poojamalpani" target="_blank" rel="noopener noreferrer" className="social-icon-btn" title="GitHub">
-                  <Github className="h-3 w-3" />
-                </a>
-                <a href="mailto:pooja@malpani.dev" className="social-icon-btn" title="Email">
-                  <Mail className="h-3 w-3" />
-                </a>
-              </div>
-              <span className="hover:text-zinc-400 cursor-pointer flex items-center gap-1" onClick={() => triggerCardCommand("help")}>
-                Workstation Protocols <ExternalLink className="h-3 w-3" />
-              </span>
+            <p>© 2026 Pooja Chandak Career Advisory. Made with precision in Mumbai, Maharashtra, India.</p>
+            <div className="flex items-center gap-4 text-[11px]">
+              <a
+                href="https://wa.me/919923649723"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-emerald-400 transition-colors"
+              >
+                WhatsApp: 9923649723
+              </a>
               <span>●</span>
-              <span className="hover:text-zinc-400 cursor-pointer flex items-center gap-1" onClick={() => triggerCardCommand("about")}>
-                Philosophical Mandates <ExternalLink className="h-3 w-3" />
-              </span>
+              <a
+                href="https://www.linkedin.com/in/pooja-chandak-0b409a52/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-emerald-400 transition-colors"
+              >
+                LinkedIn Profile
+              </a>
             </div>
           </div>
         </footer>
+
       </div>
     </>
   );

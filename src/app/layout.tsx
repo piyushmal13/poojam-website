@@ -24,32 +24,32 @@ const jetBrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Pooja Malpani — Executive Technology Advisor & CTO Specialist",
+  title: "Pooja Chandak — Elite ATS Resume Writer & Career Branding Expert",
   description:
-    "Pooja Malpani is a veteran product engineering champion and corporate tech advisor. Providing executive architecture audits, team scaling strategies, and system modernization consulting for enterprise-level operations.",
+    "Pooja Chandak is an elite ATS Resume Writer, Cover Letter Specialist, and LinkedIn Profile Optimizer with 13+ years of experience helping job seekers stand out and secure corporate shortlistings.",
   keywords: [
-    "Pooja Malpani",
-    "CTO Advisor",
-    "Technology Consultant",
-    "Enterprise Architecture",
-    "Executive Engineering",
-    "System Modernization",
-    "Tech Due Diligence",
+    "Pooja Chandak",
+    "ATS Resume Writer",
+    "Resume Writer Mumbai",
+    "LinkedIn Profile Optimization",
+    "Cover Letter Specialist",
+    "Job Search Strategy",
+    "SWOT Resume Analysis",
   ],
-  authors: [{ name: "Pooja Malpani" }],
+  authors: [{ name: "Pooja Chandak" }],
   openGraph: {
-    title: "Pooja Malpani — Executive Technology Advisor & CTO Specialist",
+    title: "Pooja Chandak — Elite ATS Resume Writer & Career Branding Expert",
     description:
-      "Veteran product engineering champion providing board-level architecture audits, engineering team scaling, and enterprise system modernization.",
+      "Transform your professional identity. Bypassing recruiter filters with highly targeted, keyword-optimized, and achievement-driven resumes by Pooja Chandak.",
     type: "website",
     locale: "en_US",
-    siteName: "Pooja Malpani Advisory",
+    siteName: "Pooja Chandak Career Advisory",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Pooja Malpani — Executive Technology Advisor",
+    title: "Pooja Chandak — Elite ATS Resume Writer",
     description:
-      "Board-level tech specialist providing architecture audits, team scaling, and system modernization for enterprise operations.",
+      "Transform your professional identity. Bypassing recruiter filters with keyword-optimized resumes by Pooja Chandak.",
   },
   robots: {
     index: true,
