@@ -59,6 +59,8 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
+import { LenisProvider } from "@/providers/LenisProvider";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -70,7 +72,9 @@ export default function RootLayout({
       className={`${instrumentSerif.variable} ${plusJakartaSans.variable} ${jetBrainsMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-[#030512]">
-        {children}
+        <LenisProvider>
+          {children}
+        </LenisProvider>
       </body>
     </html>
   );

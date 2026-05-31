@@ -9,51 +9,32 @@ import {
 } from "lucide-react";
 
 import {
-  MOCK_REVIEWS,
-  MOCK_CASE_STUDIES,
-  MOCK_SERVICES,
-  MOCK_BLOGS,
-  MockService,
-  MockCaseStudy
+  EXECUTIVE_LEADS,
+  PLACEMENT_DOSSIERS,
+  POSITIONING_PROGRAMS,
+  INSIGHT_JOURNAL,
+  PositioningProgram,
+  PlacementDossier
 } from "@/lib/mockDb";
+import WebGLHeroScene from "@/components/WebGLHeroScene";
+import WebGLScannerScene from "@/components/WebGLScannerScene";
+import ParallaxDashboard from "@/components/ParallaxDashboard";
+import GlobalCorridorScene from "@/components/GlobalCorridorScene";
+import CinematicDoors from "@/components/CinematicDoors";
 
 const WA = "919923649723";
 const LINKEDIN = "https://www.linkedin.com/in/pooja-chandak-0b409a52/";
 const wa = (msg?: string) =>
   `https://wa.me/${WA}?text=${encodeURIComponent(msg || "Hi Pooja! I'd like to discuss my career strategy.")}`;
 
-// Re-aligning case studies to match real outcomes and stories
-const REAL_DOSSIERS = [
-  {
-    id: "cs1",
-    name: "Case Dossier: Tech Lead to VP Engineering",
-    industry: "IT & Software Engineering",
-    timeline: "45 Days",
-    before_ctc: "₹24 LPA",
-    after_ctc: "₹52 LPA",
-    story: "Stuck in a senior engineering role applying blindly to 50+ portals with zero replies. Audited current CV, highlighted platform scaling architecture metrics rather than simple coding duties, and optimized their LinkedIn visibility parameters.",
-    resume_before: "Responsible for managing software deployments, writing code in Python, and leading a team of developers.",
-    resume_after: "Led GTM platform re-architecture, improving server latency by 45% and saving ₹18L in monthly AWS compute costs; coached and scaled a team of 12 engineering peers."
-  },
-  {
-    id: "cs2",
-    name: "Case Dossier: Finance Manager to Director",
-    industry: "Corporate Finance & Auditing",
-    timeline: "60 Days",
-    before_ctc: "₹18 LPA",
-    after_ctc: "₹38 LPA",
-    story: "Finance manager who struggled to present strategic corporate alignment. restructed bullet points applying cooperative auditing metrics to showcase concrete bottom-line vendor cost savings.",
-    resume_before: "Managed regional warehouse inventory lists, monitored logistics supply vendor contracts, and verified standard audit logs.",
-    resume_after: "Optimized inventory turnover by 22%; restructured regional logistics routes to secure ₹1.8Cr in annual bottom-line vendor cost savings."
-  }
-];
+
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [bookOpen, setBookOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<any | null>(null);
-  const [activeDossier, setActiveDossier] = useState<any>(REAL_DOSSIERS[0]);
+  const [activeDossier, setActiveDossier] = useState<any>(PLACEMENT_DOSSIERS[0]);
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
 
   useEffect(() => {
@@ -74,11 +55,9 @@ export default function Home() {
           ═══════════════════════════════════════════ */}
       <header className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ${scrolled ? "bg-[#040714]/92 backdrop-blur-2xl border-b border-graphite-light/35 py-3" : "py-6 bg-transparent"}`}>
         <div className="container-wide flex items-center justify-between">
-          <a href="#" className="flex items-center gap-2.5 select-none group">
-            <div className="h-8.5 w-8.5 rounded-lg flex items-center justify-center font-display text-sm text-champagne font-bold" style={{ background: "rgba(201,168,76,0.06)", border: "1px solid rgba(201,168,76,0.2)" }}>PM</div>
-            <div className="flex flex-col">
-              <span className="text-[11px] font-extrabold tracking-[0.25em] text-white uppercase transition-colors group-hover:text-champagne">PM Executive Strategy</span>
-              <span className="text-[8px] font-mono text-text-secondary tracking-widest uppercase">Corporate Career Advisory</span>
+          <a href="#" className="flex items-center gap-3 group relative z-10">
+            <div className="w-10 h-10 rounded-full border border-champagne/30 flex items-center justify-center bg-midnight/80 group-hover:border-champagne transition-colors">
+              <Star className="w-4 h-4 text-champagne" />
             </div>
           </a>
 
@@ -87,7 +66,7 @@ export default function Home() {
               ["#stories", "Success Stories"],
               ["#reviews", "Reviews"],
               ["#services", "Services"],
-              ["#services", "ATS Audit"],
+              ["/ats-audit", "ATS Audit"],
               ["#contact", "Contact"]
             ].map(([h, l]) => (
               <a key={l} href={h} className="text-[10px] font-mono tracking-widest text-text-secondary hover:text-white transition-colors">{l.toUpperCase()}</a>
@@ -120,7 +99,7 @@ export default function Home() {
               ["#stories", "Success Stories"],
               ["#reviews", "Reviews"],
               ["#services", "Services"],
-              ["#services", "ATS Audit"],
+              ["/ats-audit", "ATS Audit"],
               ["#contact", "Contact"]
             ].map(([h, l]) => (
               <a key={l} href={h} onClick={() => setMenuOpen(false)} className="text-3xl text-white hover:text-champagne transition-colors font-display">{l}</a>
@@ -137,6 +116,7 @@ export default function Home() {
           HERO SECTION (Clarity, Value, Professionalism)
           ═══════════════════════════════════════════ */}
       <section className="relative min-h-[90vh] flex items-center pt-28 pb-16 overflow-hidden">
+        <WebGLHeroScene />
         <div className="container-wide relative z-10 w-full">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             
@@ -194,10 +174,16 @@ export default function Home() {
       </section>
 
       {/* ═══════════════════════════════════════════
+          CINEMATIC DOORS SCROLL EFFECT
+          ═══════════════════════════════════════════ */}
+      <CinematicDoors />
+
+      {/* ═══════════════════════════════════════════
           GENUINE CORPORATE ADVISORY SERVICES
           ═══════════════════════════════════════════ */}
-      <section id="services" className="section-spacing relative z-10 border-t border-graphite-light/50 bg-midnight/10">
-        <div className="container-narrow space-y-12">
+      <section id="services" className="section-spacing relative z-10 border-t border-graphite-light/50 bg-midnight/10 overflow-hidden">
+        <WebGLScannerScene />
+        <div className="container-narrow space-y-12 relative z-10">
           
           <div className="text-center max-w-xl mx-auto space-y-3">
             <span className="t-overline text-champagne">Premium Services</span>
@@ -382,10 +368,27 @@ export default function Home() {
       </section>
 
       {/* ═══════════════════════════════════════════
+          THE LINKEDIN AUTHORITY CORE
+          ═══════════════════════════════════════════ */}
+      <section className="section-spacing relative z-10 border-t border-graphite-light/50 bg-[#0A0E23] overflow-hidden">
+        <div className="container-wide">
+          <div className="text-center max-w-xl mx-auto space-y-3 mb-10">
+            <span className="t-overline text-champagne">Algorithm Mastery</span>
+            <h2 className="t-headline">The LinkedIn <span className="gradient-gold">Authority</span> Core.</h2>
+            <p className="t-body text-xs">
+              We reverse-engineer the LinkedIn Recruiter Seat search filters to ensure your profile ranks in the top 1% of your industry.
+            </p>
+          </div>
+          <ParallaxDashboard />
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════
           PLACEMENT DOSSIERS (Zepto, PhonePe, Salesforce)
           ═══════════════════════════════════════════ */}
-      <section id="stories" className="section-spacing relative z-10 border-t border-graphite-light/35 bg-[#030512]">
-        <div className="container-narrow space-y-12">
+      <section id="stories" className="section-spacing relative z-10 border-t border-graphite-light/35 bg-[#030512] overflow-hidden">
+        <GlobalCorridorScene />
+        <div className="container-narrow space-y-12 relative z-10">
           
           <div className="text-center max-w-xl mx-auto space-y-3">
             <span className="t-overline text-champagne">Verified Placements</span>
@@ -398,7 +401,7 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Selection Column */}
             <div className="space-y-2">
-              {REAL_DOSSIERS.map((cs) => (
+              {PLACEMENT_DOSSIERS.map((cs) => (
                 <button
                   key={cs.id}
                   onClick={() => setActiveDossier(cs)}
@@ -469,20 +472,22 @@ export default function Home() {
             <h2 className="t-headline">Google & LinkedIn <br /><span className="gradient-gold">Advisory Reviews Wall</span>.</h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {MOCK_REVIEWS.slice(0, 3).map((rev) => (
-              <div key={rev.id} className="glass rounded-3xl p-6 border border-graphite-light/45 space-y-4">
-                <div className="flex justify-between items-center">
-                  <div className="flex gap-0.5">
-                    {Array.from({ length: rev.rating }).map((_, i) => (
-                      <Star key={i} className="w-3.5 h-3.5 star-gold" />
-                    ))}
+          <div className="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-6 scrollbar-hide">
+            {EXECUTIVE_LEADS.map((rev) => (
+              <div key={rev.id} className="min-w-[85vw] sm:min-w-[400px] snap-center glass rounded-3xl p-6 border border-graphite-light/45 space-y-4 flex flex-col justify-between">
+                <div>
+                  <div className="flex justify-between items-center mb-4">
+                    <div className="flex gap-0.5">
+                      {Array.from({ length: rev.rating }).map((_, i) => (
+                        <Star key={i} className="w-3.5 h-3.5 star-gold" />
+                      ))}
+                    </div>
+                    <span className="badge-success text-[8px]">{rev.result}</span>
                   </div>
-                  <span className="badge-success text-[8px]">{rev.result}</span>
+                  <p className="text-[11px] text-text-secondary leading-relaxed italic">
+                    "{rev.text}"
+                  </p>
                 </div>
-                <p className="text-[11px] text-text-secondary leading-relaxed italic">
-                  "{rev.text}"
-                </p>
                 <div className="flex gap-3 items-center pt-4 border-t border-graphite-light/50">
                   <div className="h-8 w-8 rounded-full flex items-center justify-center font-bold text-xs bg-graphite text-champagne border border-champagne/15">
                     {rev.name.charAt(0)}

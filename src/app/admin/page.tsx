@@ -8,13 +8,13 @@ import {
 } from "lucide-react";
 
 import {
-  MOCK_REVIEWS,
-  MOCK_CASE_STUDIES,
-  MOCK_SERVICES,
-  MOCK_BLOGS,
-  MockReview,
-  MockCaseStudy,
-  MockBlog
+  EXECUTIVE_LEADS,
+  PLACEMENT_DOSSIERS,
+  POSITIONING_PROGRAMS,
+  INSIGHT_JOURNAL,
+  ExecutiveLead,
+  PlacementDossier,
+  InsightJournal
 } from "@/lib/mockDb";
 
 export default function AdminDashboard() {
@@ -23,9 +23,9 @@ export default function AdminDashboard() {
   const [authError, setAuthError] = useState("");
 
   // CMS state loaded from mockDb
-  const [blogs, setBlogs] = useState<MockBlog[]>([]);
-  const [caseStudies, setCaseStudies] = useState<MockCaseStudy[]>([]);
-  const [reviews, setReviews] = useState<MockReview[]>([]);
+  const [blogs, setBlogs] = useState<InsightJournal[]>([]);
+  const [caseStudies, setCaseStudies] = useState<PlacementDossier[]>([]);
+  const [reviews, setReviews] = useState<ExecutiveLead[]>([]);
   const [leads, setLeads] = useState<any[]>([]);
 
   const [activeTab, setActiveTab] = useState<"blogs" | "cases" | "reviews" | "leads">("blogs");
@@ -37,9 +37,9 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     // Initialise lists
-    setBlogs(MOCK_BLOGS);
-    setCaseStudies(MOCK_CASE_STUDIES);
-    setReviews(MOCK_REVIEWS);
+    setBlogs(INSIGHT_JOURNAL);
+    setCaseStudies(PLACEMENT_DOSSIERS);
+    setReviews(EXECUTIVE_LEADS);
 
     // Mock Leads List
     setLeads([
@@ -63,7 +63,7 @@ export default function AdminDashboard() {
   const addBlog = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newBlog.title || !newBlog.content) return;
-    const blog: MockBlog = {
+    const blog: InsightJournal = {
       id: `b_new_${Date.now()}`,
       title: newBlog.title,
       slug: newBlog.title.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, ""),
@@ -88,7 +88,7 @@ export default function AdminDashboard() {
   const addCase = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newCase.name || !newCase.story) return;
-    const cs: MockCaseStudy = {
+    const cs: PlacementDossier = {
       id: `cs_new_${Date.now()}`,
       name: newCase.name,
       industry: newCase.industry || "General Consulting",
@@ -113,7 +113,7 @@ export default function AdminDashboard() {
   const addReview = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newReview.name || !newReview.text) return;
-    const rev: MockReview = {
+    const rev: ExecutiveLead = {
       id: `rev_new_${Date.now()}`,
       name: newReview.name,
       role: newReview.role,
