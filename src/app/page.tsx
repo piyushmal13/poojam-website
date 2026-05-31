@@ -74,19 +74,23 @@ export default function Home() {
           ═══════════════════════════════════════════ */}
       <header className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ${scrolled ? "bg-[#040714]/92 backdrop-blur-2xl border-b border-graphite-light/35 py-3" : "py-6 bg-transparent"}`}>
         <div className="container-wide flex items-center justify-between">
-          <a href="#" className="flex items-center gap-2 select-none group">
-            <div className="h-8 w-8 rounded-lg flex items-center justify-center font-display text-sm text-champagne font-bold" style={{ background: "rgba(201,168,76,0.06)", border: "1px solid rgba(201,168,76,0.2)" }}>PM</div>
-            <div className="text-[12px] font-bold tracking-[0.2em] text-white uppercase transition-colors group-hover:text-champagne">Pooja Malpani</div>
+          <a href="#" className="flex items-center gap-2.5 select-none group">
+            <div className="h-8.5 w-8.5 rounded-lg flex items-center justify-center font-display text-sm text-champagne font-bold" style={{ background: "rgba(201,168,76,0.06)", border: "1px solid rgba(201,168,76,0.2)" }}>PM</div>
+            <div className="flex flex-col">
+              <span className="text-[11px] font-extrabold tracking-[0.25em] text-white uppercase transition-colors group-hover:text-champagne">PM Executive Strategy</span>
+              <span className="text-[8px] font-mono text-text-secondary tracking-widest uppercase">Corporate Career Advisory</span>
+            </div>
           </a>
 
           <nav className="hidden lg:flex items-center gap-8">
             {[
-              ["#services", "Advisory Services"],
-              ["#stories", "Placement Dossiers"],
-              ["#reviews", "Client Endorsements"],
-              ["#faq", "FAQ"]
+              ["#stories", "Success Stories"],
+              ["#reviews", "Reviews"],
+              ["#services", "Services"],
+              ["#services", "ATS Audit"],
+              ["#contact", "Contact"]
             ].map(([h, l]) => (
-              <a key={h} href={h} className="text-[11px] font-mono tracking-widest text-text-secondary hover:text-white transition-colors">{l.toUpperCase()}</a>
+              <a key={l} href={h} className="text-[10px] font-mono tracking-widest text-text-secondary hover:text-white transition-colors">{l.toUpperCase()}</a>
             ))}
           </nav>
 
@@ -97,7 +101,7 @@ export default function Home() {
             <button onClick={() => setBookOpen(true)} className="btn-gold" style={{ padding: "0.5rem 1.25rem", fontSize: "0.7rem" }}>
               <Calendar className="w-3.5 h-3.5" /> Book Consultation
             </button>
-            <button onClick={() => setMenuOpen(true)} className="lg:hidden p-2 text-text-secondary hover:text-white" aria-label="Menu">
+            <button onClick={() => setMenuOpen(true)} className="lg:hidden p-2 text-text-secondary hover:text-white animate-pulse" aria-label="Menu">
               <Menu className="w-5 h-5" />
             </button>
           </div>
@@ -113,12 +117,13 @@ export default function Home() {
           </div>
           <nav className="flex-1 flex flex-col justify-center container-wide gap-8">
             {[
-              ["#services", "Advisory Services"],
-              ["#stories", "Placement Dossiers"],
-              ["#reviews", "Client Endorsements"],
-              ["#faq", "FAQ"]
+              ["#stories", "Success Stories"],
+              ["#reviews", "Reviews"],
+              ["#services", "Services"],
+              ["#services", "ATS Audit"],
+              ["#contact", "Contact"]
             ].map(([h, l]) => (
-              <a key={h} href={h} onClick={() => setMenuOpen(false)} className="text-3xl text-white hover:text-champagne transition-colors font-display">{l}</a>
+              <a key={l} href={h} onClick={() => setMenuOpen(false)} className="text-3xl text-white hover:text-champagne transition-colors font-display">{l}</a>
             ))}
           </nav>
           <div className="container-wide pb-10 flex flex-col gap-3">
@@ -195,10 +200,10 @@ export default function Home() {
         <div className="container-narrow space-y-12">
           
           <div className="text-center max-w-xl mx-auto space-y-3">
-            <span className="t-overline text-champagne">Consulting Programs</span>
+            <span className="t-overline text-champagne">Premium Services</span>
             <h2 className="t-headline">Corporate Positioning <span className="gradient-gold">Services</span>.</h2>
             <p className="t-body text-xs">
-              Rigorous, audit-backed re-branding packages tailored for Director, VP, and C-Suite career transitions.
+              Bespoke, audit-backed professional branding and positioning programs. No automated templates. 100% human expertise.
             </p>
           </div>
 
@@ -211,21 +216,24 @@ export default function Home() {
                   <FileText className="w-3.5 h-3.5" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-white font-display">Bespoke ATS Resume Writing</h3>
-                  <p className="text-[10px] font-mono text-text-secondary mt-1">CAR Bullet Restructuring</p>
+                  <h3 className="text-base font-bold text-white font-display">Bespoke ATS-Approved Resume Writing</h3>
+                  <p className="text-[10px] font-mono text-text-secondary mt-1">First-Principles Architecture</p>
                 </div>
                 <p className="text-[11px] text-text-secondary leading-relaxed">
-                  First-principles rebuild of your professional resume, converting technical responsibilities into high-leverage business outcomes that rank at the top of recruiter searches.
+                  First-principles rebuild of your professional resume, converting dense operational duties into high-impact, ATS-approved Context-Action-Result (CAR) achievements.
                 </p>
                 <ul className="space-y-2 text-[11px] text-text-secondary">
-                  <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> ATS Keyword Integration</li>
+                  <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> Structural ATS compliance audits</li>
                   <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> Context-Action-Result (CAR) bullets</li>
-                  <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> Modern executive layout</li>
+                  <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> Hand-crafted executive layouts</li>
                 </ul>
               </div>
               <div className="pt-6 border-t border-graphite-light/50 mt-6 flex items-center justify-between">
-                <span className="text-sm font-bold font-mono text-champagne">Starts at ₹2,000</span>
-                <a href={wa("Hi Pooja! I'm interested in your Bespoke ATS Resume Writing service (starts at ₹2,000).")} target="_blank" rel="noopener noreferrer" className="text-[10px] font-mono text-text-muted hover:text-white flex items-center gap-1 transition-colors">
+                <div className="flex flex-col">
+                  <span className="text-[8px] font-mono text-text-muted">INVESTMENT</span>
+                  <span className="text-sm font-bold font-mono text-champagne">Starts at ₹2,000</span>
+                </div>
+                <a href={wa("Hi Pooja! I'm interested in your Bespoke ATS-Approved Resume Writing service (starts at ₹2,000).")} target="_blank" rel="noopener noreferrer" className="text-[10px] font-mono text-text-muted hover:text-white flex items-center gap-1 transition-colors">
                   INQUIRE NOW <ArrowRight className="w-3 h-3" />
                 </a>
               </div>
@@ -242,16 +250,19 @@ export default function Home() {
                   <p className="text-[10px] font-mono text-text-secondary mt-1">Inbound Recruiter Draw</p>
                 </div>
                 <p className="text-[11px] text-text-secondary leading-relaxed">
-                  Re-architecting your entire LinkedIn profile into a premium personal brand hub that attracts C-Suite search parameters and drives executive inbounds.
+                  Total optimization of your LinkedIn presence to attract C-Suite search parameters. I structure headlines, summaries, and experience fields to maximize profile indexation.
                 </p>
                 <ul className="space-y-2 text-[11px] text-text-secondary">
-                  <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> Search-optimized summary & headline</li>
-                  <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> Inbound recruiter seat filters tuning</li>
-                  <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> Custom banner graphic asset</li>
+                  <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> Algorithmic keyword parameter tuning</li>
+                  <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> High-authority profile summaries</li>
+                  <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> Premium banner graphic asset</li>
                 </ul>
               </div>
               <div className="pt-6 border-t border-graphite-light/50 mt-6 flex items-center justify-between">
-                <span className="text-sm font-bold font-mono text-champagne">Custom Pricing</span>
+                <div className="flex flex-col">
+                  <span className="text-[8px] font-mono text-text-muted">INVESTMENT</span>
+                  <span className="text-sm font-bold font-mono text-champagne">WhatsApp Inquiry</span>
+                </div>
                 <a href={wa("Hi Pooja! I'm interested in your LinkedIn Profile Management service.")} target="_blank" rel="noopener noreferrer" className="text-[10px] font-mono text-text-muted hover:text-white flex items-center gap-1 transition-colors">
                   INQUIRE NOW <ArrowRight className="w-3 h-3" />
                 </a>
@@ -265,21 +276,24 @@ export default function Home() {
                   <Users className="w-3.5 h-3.5" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-white font-display">Placement Assistance</h3>
-                  <p className="text-[10px] font-mono text-text-secondary mt-1">Strategic Placement Leads</p>
+                  <h3 className="text-base font-bold text-white font-display">Executive Placement Assistance</h3>
+                  <p className="text-[10px] font-mono text-text-secondary mt-1">Corridor Networking & Leads</p>
                 </div>
                 <p className="text-[11px] text-text-secondary leading-relaxed">
-                  Leveraging my extensive corporate network in major Indian and international tech/finance corridors to connect qualified profiles with premium placement leads.
+                  Proactive routing of your optimized credentials to direct recruiter hiring pools across major tech, operations, and finance organizations in India and international corridors.
                 </p>
                 <ul className="space-y-2 text-[11px] text-text-secondary">
-                  <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> Direct recruiter matchmaker routing</li>
-                  <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> Pre-qualified executive leads</li>
-                  <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> Comprehensive shortlisting support</li>
+                  <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> Recruiter matchmaking routing</li>
+                  <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> Direct resume pushes to hiring managers</li>
+                  <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> Exclusive placement lead alerts</li>
                 </ul>
               </div>
               <div className="pt-6 border-t border-graphite-light/50 mt-6 flex items-center justify-between">
-                <span className="text-sm font-bold font-mono text-champagne">Custom Pricing</span>
-                <a href={wa("Hi Pooja! I'm interested in your Placement Assistance program.")} target="_blank" rel="noopener noreferrer" className="text-[10px] font-mono text-text-muted hover:text-white flex items-center gap-1 transition-colors">
+                <div className="flex flex-col">
+                  <span className="text-[8px] font-mono text-text-muted">INVESTMENT</span>
+                  <span className="text-sm font-bold font-mono text-champagne">WhatsApp Inquiry</span>
+                </div>
+                <a href={wa("Hi Pooja! I'm interested in your Executive Placement Assistance program.")} target="_blank" rel="noopener noreferrer" className="text-[10px] font-mono text-text-muted hover:text-white flex items-center gap-1 transition-colors">
                   INQUIRE NOW <ArrowRight className="w-3 h-3" />
                 </a>
               </div>
@@ -292,55 +306,78 @@ export default function Home() {
                   <MapPin className="w-3.5 h-3.5" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-white font-display">Google Business Profile Management</h3>
-                  <p className="text-[10px] font-mono text-text-secondary mt-1">Local consultant Search Visibility</p>
+                  <h3 className="text-base font-bold text-white font-display">Google Profile Management</h3>
+                  <p className="text-[10px] font-mono text-text-secondary mt-1">Search Engine Authority</p>
                 </div>
                 <p className="text-[11px] text-text-secondary leading-relaxed">
-                  Establish dominant search authority on Google. Designed for consultants, board advisors, and senior executives who want verified organic search credibility.
+                  Establish dominant organic search authority. I help senior executives and independent consultants configure and audit their Google Business Profile (GBP) for maximum local search validation.
                 </p>
                 <ul className="space-y-2 text-[11px] text-text-secondary">
-                  <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> GBP setup & verification</li>
-                  <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> Local search keyword auditing</li>
-                  <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> Client review curation system</li>
+                  <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> Local search verification strategy</li>
+                  <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> Curation workflows for Google reviews</li>
+                  <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> High-authority profile search setup</li>
                 </ul>
               </div>
               <div className="pt-6 border-t border-graphite-light/50 mt-6 flex items-center justify-between">
-                <span className="text-sm font-bold font-mono text-champagne">Custom Pricing</span>
-                <a href={wa("Hi Pooja! I'm interested in your Google Business Profile Management service.")} target="_blank" rel="noopener noreferrer" className="text-[10px] font-mono text-text-muted hover:text-white flex items-center gap-1 transition-colors">
+                <div className="flex flex-col">
+                  <span className="text-[8px] font-mono text-text-muted">INVESTMENT</span>
+                  <span className="text-sm font-bold font-mono text-champagne">WhatsApp Inquiry</span>
+                </div>
+                <a href={wa("Hi Pooja! I'm interested in your Google Profile Management service.")} target="_blank" rel="noopener noreferrer" className="text-[10px] font-mono text-text-muted hover:text-white flex items-center gap-1 transition-colors">
                   INQUIRE NOW <ArrowRight className="w-3 h-3" />
                 </a>
               </div>
             </div>
 
-            {/* Service 5: Bespoke C-Suite Interview Coaching */}
+            {/* Service 5: Elite C-Suite Program */}
             <div className="glass rounded-3xl p-6 border border-graphite-light/50 flex flex-col justify-between hover:border-champagne/45 transition-all lg:col-span-2">
               <div className="space-y-4">
                 <div className="h-8 w-8 rounded-lg flex items-center justify-center bg-champagne/5 text-champagne border border-champagne/15">
                   <Sparkles className="w-3.5 h-3.5" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-white font-display">Bespoke C-Suite Interview Coaching & Advisory</h3>
-                  <p className="text-[10px] font-mono text-text-secondary mt-1">Salary Negotiation & Narrative Strategic Alignment</p>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h3 className="text-base font-bold text-white font-display">Bespoke C-Suite Transformation Program</h3>
+                    <span className="badge-gold text-[8px] py-0.5 px-1.5">SIGNATURE</span>
+                  </div>
+                  <p className="text-[10px] font-mono text-text-secondary mt-1">LinkedIn + ATS + Placement + Interview Preparation</p>
                 </div>
                 <p className="text-[11px] text-text-secondary leading-relaxed">
-                  High-stakes 1-on-1 career mapping. We cover the entire transformation lifecycle—re-architecting resume bullets, configuring LinkedIn, rehearsing strategic interview positioning, and structuring final salary negotiations.
+                  Our comprehensive executive career pivot program. I personally oversee and execute your entire positioning lifecycle—re-architecting your ATS-approved CV, managing your LinkedIn search optimizations, routing files to placement leads, providing structured interview prep, and strategizing C-Suite salary negotiations.
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[11px] text-text-secondary pt-2">
-                  <div className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> 1-on-1 private video coaching</div>
-                  <div className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> C-suite narrative structuring</div>
-                  <div className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> High-stakes salary negotiations</div>
-                  <div className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> Direct 30-day advisory support</div>
+                  <div className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> Hand-crafted ATS resume rewrite</div>
+                  <div className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> Total LinkedIn profile transformation</div>
+                  <div className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> Structured mock interviews & positioning</div>
+                  <div className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> Direct WhatsApp advisory channel</div>
                 </div>
               </div>
-              <div className="pt-6 border-t border-graphite-light/50 mt-6 flex items-center justify-between">
-                <span className="text-sm font-bold font-mono text-champagne">Premium Customized Advisory</span>
-                <a href={wa("Hi Pooja! I'm interested in your Bespoke C-Suite Coaching & Advisory program.")} target="_blank" rel="noopener noreferrer" className="btn-gold text-xs tracking-wider">
+              <div className="pt-6 border-t border-graphite-light/50 mt-6 flex flex-col sm:flex-row gap-4 items-center justify-between">
+                <div className="text-left w-full sm:w-auto">
+                  <span className="text-[8px] font-mono text-text-muted block uppercase">EXECUTIVE LEVEL INVESTMENT</span>
+                  <span className="text-xs font-semibold text-white font-mono">Quotes Customized to Scope</span>
+                </div>
+                <a href={wa("Hi Pooja! I want to inquire about your comprehensive C-Suite Transformation Program (managing my LinkedIn + ATS + Placements + Interview Prep).")} target="_blank" rel="noopener noreferrer" className="btn-gold text-xs tracking-wider w-full sm:w-auto text-center justify-center">
                   <MessageSquare className="w-3.5 h-3.5" /> INQUIRE ON WHATSAPP
                 </a>
               </div>
             </div>
 
           </div>
+
+          {/* Pricing Advisory Disclaimer Card */}
+          <div className="glass rounded-3xl p-6 border border-champagne/15 max-w-3xl mx-auto" style={{ background: "rgba(201,168,76,0.02)" }}>
+            <div className="flex flex-col sm:flex-row gap-4 items-start">
+              <Shield className="w-5 h-5 text-champagne flex-shrink-0 mt-0.5" />
+              <div className="space-y-1.5 text-left">
+                <span className="text-[10px] font-mono text-champagne tracking-wider uppercase block">Corporate Advisory Notice</span>
+                <p className="text-[11px] text-text-secondary leading-relaxed">
+                  Bespoke ATS Resumes are available starting at a low-friction entry tier of **₹2,000**. For complete executive positioning solutions—managing your LinkedIn profile, configuring ATS-approved credentials, routing files to direct placement networks, and running personalized interview preparation—we quote customized packages aligned directly with your seniority.
+                </p>
+              </div>
+            </div>
+          </div>
+
         </div>
       </section>
 
@@ -502,7 +539,7 @@ export default function Home() {
       {/* ═══════════════════════════════════════════
           FINAL CALL TO ACTION
           ═══════════════════════════════════════════ */}
-      <section className="section-spacing relative z-10 overflow-hidden bg-[#030512]">
+      <section id="contact" className="section-spacing relative z-10 overflow-hidden bg-[#030512]">
         <div className="container-narrow">
           <div
             className="relative rounded-3xl text-center px-8 py-16 md:py-24 overflow-hidden border border-champagne/20"
@@ -537,21 +574,22 @@ export default function Home() {
             <div>
               <div className="flex items-center gap-3 mb-4">
                 <div className="h-9 w-9 rounded-xl flex items-center justify-center font-display text-sm text-champagne font-bold" style={{ background: "rgba(201,168,76,0.06)", border: "1px solid rgba(201,168,76,0.2)" }}>PM</div>
-                <div className="font-bold text-white uppercase tracking-wider text-xs">Pooja Malpani</div>
+                <div className="font-bold text-white uppercase tracking-wider text-xs">PM Executive Strategy</div>
               </div>
               <p className="text-[11px] text-text-secondary leading-relaxed max-w-xs">
-                Executive Career Strategist. Applying cooperative auditing rigor to executive personal branding in IT, Finance, and Operations across India.
+                Executive Career Advisory. Hand-crafted, outcome-driven personal branding and strategic positioning for Director, VP, and C-Suite career transitions.
               </p>
             </div>
             <div>
               <div className="t-overline mb-4 text-[9px]">Navigational Links</div>
               <div className="space-y-2.5">
                 {[
-                  ["#services", "Advisory Services"],
-                  ["#stories", "Placement Dossiers"],
-                  ["#reviews", "Verifiable Reviews"]
+                  ["#stories", "Success Stories"],
+                  ["#reviews", "Reviews"],
+                  ["#services", "Services"],
+                  ["#services", "ATS Audit"]
                 ].map(([h, l]) => (
-                  <a key={h} href={h} className="block text-[11px] text-text-secondary hover:text-white transition-colors">{l}</a>
+                  <a key={l} href={h} className="block text-[11px] text-text-secondary hover:text-white transition-colors">{l}</a>
                 ))}
               </div>
             </div>

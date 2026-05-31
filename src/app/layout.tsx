@@ -48,7 +48,7 @@ export const metadata: Metadata = {
       "Stop being invisible to recruiters. ATS-optimized resumes, LinkedIn overhauls, and career positioning by India's most trusted Executive Career Strategist.",
     type: "website",
     locale: "en_IN",
-    siteName: "Pooja Malpani Career Advisory",
+    siteName: "PM Executive Strategy",
   },
   twitter: {
     card: "summary_large_image",
