@@ -1,221 +1,644 @@
 @import "tailwindcss";
 
-@theme {
-  --color-brand-bg: #030303;
-  --color-brand-surface: #0A0A0C;
-  --color-brand-elevated: #121216;
-  --color-brand-emerald: #10B981;
-  --color-brand-cyan: #06B6D4;
-  --color-brand-gold: #D4AF37;
-  --color-brand-gold-muted: #AA8B22;
-  --color-brand-text: #F8FAFC;
-  --color-brand-text-muted: #8E9196;
+/* ================================================================
+   POOJA MALPANI — DIGITAL EXPERIENCE
+   Design System: Cinematic Executive Authority
+   
+   Philosophy: Every pixel is lit cinematically.
+   No flat colors. Everything physically present.
+   ================================================================ */
 
-  --font-serif: "Outfit", "Inter", system-ui, sans-serif;
-  --font-sans: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
+@theme {
+  /* ── Core Palette: Cinematic Lighting ── */
+  --color-midnight:        #040714;
+  --color-obsidian:        #0A0E23;
+  --color-graphite:        #141B3A;
+  --color-graphite-light:  #1C2548;
+  --color-graphite-border: #232D58;
+
+  /* ── Accent: Luxury Metals ── */
+  --color-champagne:       #C9A84C;
+  --color-champagne-light: #E8D5A0;
+  --color-champagne-deep:  #9A7B2E;
+  --color-platinum:        #B8C0D0;
+
+  /* ── Text Hierarchy ── */
+  --color-white:           #F0EDE6;
+  --color-warm-white:      #E8E2D4;
+  --color-text-secondary:  #8795B5;
+  --color-text-muted:      #5E6B8A;
+  --color-text-faint:      #3A4568;
+
+  /* ── Semantic ── */
+  --color-success:         #34D399;
+  --color-danger:          #F87171;
+  --color-warning:         #FBBF24;
+  --color-info:            #60A5FA;
+
+  /* ── Typography ── */
+  --font-display: "Instrument Serif", "Georgia", serif;
+  --font-body:    "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
+  --font-mono:    "JetBrains Mono", "Fira Code", monospace;
+
+  /* ── Spacing Scale ── */
+  --space-section: clamp(6rem, 12vw, 10rem);
+  --space-section-sm: clamp(4rem, 8vw, 7rem);
 }
 
+/* ================================================================
+   BASE
+   ================================================================ */
 @layer base {
-  :root {
-    color-scheme: dark;
-    --color-emerald-rgb: 16, 185, 129;
-    --color-cyan-rgb: 6, 182, 212;
-    --color-gold-rgb: 212, 175, 55;
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  :root { color-scheme: dark; }
+
+  html {
+    font-size: 16px;
+    scroll-behavior: auto; /* Lenis handles smooth scroll */
   }
 
   body {
-    background-color: #030303;
-    color: #F8FAFC;
-    font-family: var(--font-sans, "Plus Jakarta Sans", "Inter", system-ui, sans-serif);
+    background: #040714;
+    color: #F0EDE6;
+    font-family: var(--font-body);
     overflow-x: hidden;
-    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.65;
   }
 
-  /* Custom Scrollbar */
-  ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-  ::-webkit-scrollbar-track {
-    background: #030303;
-  }
+  /* ── Premium Scrollbar ── */
+  ::-webkit-scrollbar { width: 3px; }
+  ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb {
-    background: #1C1C24;
+    background: linear-gradient(180deg, #232D58, #C9A84C);
     border-radius: 99px;
   }
-  ::-webkit-scrollbar-thumb:hover {
-    background: #10B981;
+
+  ::selection {
+    background: rgba(201, 168, 76, 0.22);
+    color: #F0EDE6;
   }
+
+  /* Lenis modal lock */
+  html.lenis-stopped { overflow: hidden; }
 }
 
-/* --- Apple & Antigravity Style Utilities --- */
+/* ================================================================
+   LAYOUT
+   ================================================================ */
+.container-wide {
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: clamp(1.5rem, 5vw, 6rem);
+}
 
-.text-gradient-emerald-cyan {
-  background: linear-gradient(135deg, #34D399 0%, #06B6D4 50%, #3B82F6 100%);
+.container-narrow {
+  max-width: 1100px;
+  margin-inline: auto;
+  padding-inline: clamp(1.5rem, 5vw, 6rem);
+}
+
+.container-reading {
+  max-width: 760px;
+  margin-inline: auto;
+  padding-inline: clamp(1.5rem, 5vw, 3rem);
+}
+
+/* ================================================================
+   TYPOGRAPHY — EDITORIAL LUXURY
+   Massive. Spacious. Magazine-quality.
+   ================================================================ */
+
+/* Display / Hero */
+.t-display {
+  font-family: var(--font-display);
+  font-size: clamp(3.5rem, 8vw, 8rem);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+  color: #F0EDE6;
+}
+
+/* Section Headlines */
+.t-headline {
+  font-family: var(--font-display);
+  font-size: clamp(2.25rem, 5vw, 4.5rem);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  color: #F0EDE6;
+}
+
+/* Card / Subsection titles */
+.t-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  color: #F0EDE6;
+}
+
+/* Editorial overline */
+.t-overline {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #C9A84C;
+}
+
+/* Body text */
+.t-body {
+  font-size: clamp(0.95rem, 1.1vw, 1.1rem);
+  line-height: 1.8;
+  color: #8795B5;
+}
+
+/* Large body for hero subtitles */
+.t-body-lg {
+  font-size: clamp(1.1rem, 1.5vw, 1.35rem);
+  line-height: 1.7;
+  color: #8795B5;
+}
+
+/* Small mono labels */
+.t-label {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #5E6B8A;
+}
+
+/* Massive stat numbers */
+.t-stat {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 4vw, 3.5rem);
+  font-weight: 400;
+  line-height: 1;
+  color: #E8D5A0;
+}
+
+/* ================================================================
+   GRADIENT UTILITIES
+   ================================================================ */
+.gradient-gold {
+  background: linear-gradient(125deg, #F0EDE6 0%, #E8D5A0 35%, #C9A84C 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-.text-gradient-gold-bronze {
-  background: linear-gradient(135deg, #FFF 0%, #F59E0B 50%, #D4AF37 100%);
+.gradient-platinum {
+  background: linear-gradient(135deg, #B8C0D0 0%, #E8E2D4 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-.text-gradient-silver {
-  background: linear-gradient(135deg, #FFFFFF 0%, #9CA3AF 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+/* ================================================================
+   CINEMATIC EFFECTS
+   ================================================================ */
+
+/* Film grain texture overlay */
+.grain::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.3;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  background-size: 200px;
 }
 
-/* Glassmorphic Panel Systems */
-.apple-glass {
-  background: rgba(10, 10, 12, 0.45);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-}
-
-.apple-glass-hover {
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.apple-glass-hover:hover {
-  background: rgba(14, 14, 18, 0.6);
-  border-color: rgba(16, 185, 129, 0.2);
-  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7),
-              0 0 20px rgba(16, 185, 129, 0.05);
-  transform: translateY(-2px);
-}
-
-/* Premium Border Animation Effect */
-.card-border-glow {
-  position: relative;
-  overflow: hidden;
-}
-
-.card-border-glow::before {
-  content: "";
+/* Volumetric light cone — use as positioned child */
+.light-cone {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(800px circle at var(--mouse-x, 0) var(--mouse-y, 0), rgba(255, 255, 255, 0.08), transparent 40%);
-  z-index: 1;
+  width: 500px;
+  height: 800px;
+  background: conic-gradient(
+    from 180deg at 50% 0%,
+    transparent 40%,
+    rgba(201, 168, 76, 0.04) 50%,
+    transparent 60%
+  );
+  filter: blur(60px);
   pointer-events: none;
 }
 
-/* Ambient Radial Spotlights */
-.ambient-glow-1 {
-  background: radial-gradient(circle, rgba(16, 185, 129, 0.08) 0%, transparent 70%);
+/* Lens bloom — glowing circle behind elements */
+.bloom {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%);
+  filter: blur(80px);
+  pointer-events: none;
 }
 
-.ambient-glow-2 {
-  background: radial-gradient(circle, rgba(6, 182, 212, 0.08) 0%, transparent 70%);
+/* Atmospheric fog band */
+.fog-band {
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  height: 200px;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(10,14,35,0.9) 40%,
+    rgba(10,14,35,0.9) 60%,
+    transparent 100%
+  );
+  pointer-events: none;
 }
 
-.ambient-glow-3 {
-  background: radial-gradient(circle, rgba(212, 175, 55, 0.04) 0%, transparent 70%);
+/* Depth vignette on sections */
+.vignette {
+  position: relative;
+}
+.vignette::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 70% 50% at 50% 50%, transparent 50%, rgba(4,7,20,0.7) 100%);
+  z-index: 1;
 }
 
-/* Grid Matrix Array Background */
-.apple-grid {
-  background-size: 50px 50px;
-  background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+/* ================================================================
+   COMPONENT: GLASS PANEL
+   Luxury frosted glass with physical depth
+   ================================================================ */
+.glass {
+  background: rgba(10, 14, 35, 0.6);
+  border: 1px solid rgba(201, 168, 76, 0.1);
+  backdrop-filter: blur(24px) saturate(120%);
+  -webkit-backdrop-filter: blur(24px) saturate(120%);
 }
 
-/* High-Impact 3D Floating Effect */
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-12px) rotate(1deg);
-  }
+.glass-elevated {
+  background: rgba(14, 19, 50, 0.75);
+  border: 1px solid rgba(201, 168, 76, 0.15);
+  backdrop-filter: blur(32px) saturate(130%);
+  -webkit-backdrop-filter: blur(32px) saturate(130%);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(201, 168, 76, 0.05) inset;
 }
 
-.animate-float {
-  animation: float 6s ease-in-out infinite;
+.glass-interactive {
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.glass-interactive:hover {
+  background: rgba(14, 19, 50, 0.85);
+  border-color: rgba(201, 168, 76, 0.3);
+  transform: translateY(-4px);
+  box-shadow:
+    0 24px 64px -16px rgba(0, 0, 0, 0.55),
+    0 0 40px rgba(201, 168, 76, 0.06),
+    0 0 0 1px rgba(201, 168, 76, 0.1) inset;
 }
 
-@keyframes float-delayed {
-  0%, 100% {
-    transform: translateY(0px) rotate(0deg);
-  }
-  50% {
-    transform: translateY(12px) rotate(-1deg);
-  }
+/* ================================================================
+   COMPONENT: BUTTONS
+   ================================================================ */
+.btn-gold {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  padding: 1rem 2.25rem;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #C9A84C 0%, #E8D5A0 100%);
+  color: #040714;
+  border-radius: 0.75rem;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
-
-.animate-float-delayed {
-  animation: float-delayed 8s ease-in-out infinite;
-}
-
-/* Reveal Scroll Elements */
-.reveal-scroll {
+.btn-gold::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #E8D5A0 0%, #F0EDE6 100%);
   opacity: 0;
-  transform: translateY(30px);
-  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.35s;
+}
+.btn-gold:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 16px 40px rgba(201, 168, 76, 0.3),
+    0 0 0 1px rgba(201, 168, 76, 0.4);
+}
+.btn-gold:hover::before { opacity: 1; }
+.btn-gold > * { position: relative; z-index: 1; }
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  padding: 1rem 2.25rem;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: transparent;
+  color: #E8E2D4;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(201, 168, 76, 0.25);
+  cursor: pointer;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn-outline:hover {
+  border-color: rgba(201, 168, 76, 0.6);
+  background: rgba(201, 168, 76, 0.06);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(201, 168, 76, 0.1);
 }
 
-.reveal-scroll.visible {
-  opacity: 1;
-  transform: translateY(0);
+/* ================================================================
+   COMPONENT: BADGE
+   ================================================================ */
+.badge-gold {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 1rem;
+  border-radius: 99px;
+  border: 1px solid rgba(201, 168, 76, 0.2);
+  background: rgba(201, 168, 76, 0.06);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #C9A84C;
 }
 
-/* Micro-Interaction Scale */
-.scale-hover {
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+.badge-success {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 99px;
+  border: 1px solid rgba(52, 211, 153, 0.2);
+  background: rgba(52, 211, 153, 0.08);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #34D399;
 }
 
-.scale-hover:hover {
-  transform: scale(1.015);
+/* ================================================================
+   COMPONENT: STAT BLOCK
+   ================================================================ */
+.stat-block {
+  text-align: center;
+  padding: 1.5rem;
+}
+.stat-block .stat-value {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 4vw, 3.5rem);
+  font-weight: 400;
+  line-height: 1;
+  color: #E8D5A0;
+}
+.stat-block .stat-label {
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #5E6B8A;
+  margin-top: 0.5rem;
 }
 
-/* Dynamic Grader Shimmer */
-@keyframes gradingShimmer {
-  0% {
-    background-position: -200% 0;
+/* ================================================================
+   COMPONENT: GOLD DIVIDER LINE
+   ================================================================ */
+.gold-rule {
+  width: 56px;
+  height: 1px;
+  background: linear-gradient(90deg, #C9A84C, transparent);
+}
+
+.gold-rule-vertical {
+  width: 1px;
+  height: 56px;
+  background: linear-gradient(180deg, #C9A84C, transparent);
+}
+
+/* ================================================================
+   COMPONENT: PROGRESS BAR
+   ================================================================ */
+.progress-track {
+  height: 2px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ================================================================
+   COMPONENT: ACCORDION
+   ================================================================ */
+.accordion-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.accordion-body.open {
+  grid-template-rows: 1fr;
+}
+.accordion-body > div {
+  overflow: hidden;
+}
+
+/* ================================================================
+   COMPONENT: TICKER
+   ================================================================ */
+@keyframes ticker-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.ticker-track {
+  overflow: hidden;
+  white-space: nowrap;
+}
+.ticker-belt {
+  display: inline-flex;
+  animation: ticker-scroll 40s linear infinite;
+}
+.ticker-belt:hover {
+  animation-play-state: paused;
+}
+
+/* ================================================================
+   KEYFRAME ANIMATIONS
+   ================================================================ */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(32px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+@keyframes pulse-ring {
+  0%   { box-shadow: 0 0 0 0 rgba(201,168,76,0.2); }
+  70%  { box-shadow: 0 0 0 8px rgba(201,168,76,0); }
+  100% { box-shadow: 0 0 0 0 rgba(201,168,76,0); }
+}
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+@keyframes draw-line {
+  from { stroke-dashoffset: 1000; }
+  to   { stroke-dashoffset: 0; }
+}
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.6; }
+  50%      { opacity: 1; }
+}
+
+/* Animation utilities */
+.anim-fade-up    { animation: fade-up 0.8s cubic-bezier(0.16,1,0.3,1) both; }
+.anim-float      { animation: float 6s ease-in-out infinite; }
+.anim-pulse-ring { animation: pulse-ring 2.5s ease-in-out infinite; }
+.anim-spin-slow  { animation: spin-slow 20s linear infinite; }
+.anim-glow       { animation: glow-pulse 3s ease-in-out infinite; }
+
+/* Stagger delays */
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+.delay-4 { animation-delay: 0.4s; }
+.delay-5 { animation-delay: 0.5s; }
+.delay-6 { animation-delay: 0.6s; }
+.delay-7 { animation-delay: 0.7s; }
+.delay-8 { animation-delay: 0.8s; }
+
+/* ================================================================
+   SECTION SPACING
+   ================================================================ */
+.section-spacing {
+  padding-block: var(--space-section);
+}
+.section-spacing-sm {
+  padding-block: var(--space-section-sm);
+}
+
+/* ================================================================
+   3D CANVAS INTEGRATION
+   Canvas takes full viewport, overlaid with scroll-driven HTML
+   ================================================================ */
+.canvas-container {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+}
+.canvas-container canvas {
+  pointer-events: auto;
+}
+
+/* Scene content overlay — sits above canvas */
+.scene-overlay {
+  position: relative;
+  z-index: 10;
+}
+
+/* ================================================================
+   RESPONSIVE HELPERS
+   ================================================================ */
+@media (max-width: 768px) {
+  .t-display {
+    font-size: clamp(2.5rem, 10vw, 4rem);
+    letter-spacing: -0.02em;
   }
-  100% {
-    background-position: 200% 0;
+  .t-headline {
+    font-size: clamp(1.75rem, 6vw, 2.75rem);
+  }
+  .btn-gold, .btn-outline {
+    width: 100%;
+    justify-content: center;
+    padding: 0.875rem 1.5rem;
   }
 }
 
-.grading-shimmer {
-  background: linear-gradient(90deg, rgba(16, 185, 129, 0.1) 25%, rgba(6, 182, 212, 0.25) 50%, rgba(16, 185, 129, 0.1) 75%);
-  background-size: 200% auto;
-  animation: gradingShimmer 2.5s infinite linear;
+/* ================================================================
+   UTILITY: HIDE SCROLLBAR ON OVERFLOW CONTAINERS
+   ================================================================ */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
 }
 
-/* Slide Down Header Animation */
-@keyframes headerEntrance {
-  from {
-    opacity: 0;
-    transform: translateY(-12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* ================================================================
+   3D SCENE LOADING SKELETON
+   ================================================================ */
+.scene-skeleton {
+  background: linear-gradient(
+    135deg,
+    rgba(20, 27, 58, 0.5) 0%,
+    rgba(28, 37, 72, 0.5) 50%,
+    rgba(20, 27, 58, 0.5) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s ease-in-out infinite;
 }
 
-.animate-header {
-  animation: headerEntrance 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
+/* ================================================================
+   STAR RATING
+   ================================================================ */
+.star-gold { color: #FBBF24; fill: #FBBF24; }
 
-/* Lead Magnet Confetti Trigger Spot */
-.whatsapp-glow {
-  box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);
-  transition: box-shadow 0.3s ease;
-}
-
-.whatsapp-glow:hover {
-  box-shadow: 0 0 25px rgba(16, 185, 129, 0.35);
+/* ================================================================
+   PRINT STYLES — strip dark bg for accessibility
+   ================================================================ */
+@media print {
+  body { background: white; color: black; }
+  .glass, .glass-elevated { background: white; border: 1px solid #ddd; }
+  .grain::after { display: none; }
 }

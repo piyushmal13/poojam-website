@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
+import { Instrument_Serif, Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
+import { LenisProvider } from "@/providers/LenisProvider";
 import "./globals.css";
 
-const cormorantGaramond = Cormorant_Garamond({
-  variable: "--font-serif",
+const instrumentSerif = Instrument_Serif({
+  variable: "--font-display",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: "400",
   display: "swap",
 });
 
 const plusJakartaSans = Plus_Jakarta_Sans({
-  variable: "--font-sans",
+  variable: "--font-body",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
   display: "swap",
@@ -24,37 +25,39 @@ const jetBrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Pooja Chandak — Elite ATS Resume Writer & Career Branding Expert",
+  title: "Pooja Malpani — Executive Career Strategist",
   description:
-    "Pooja Chandak is an elite ATS Resume Writer, Cover Letter Specialist, and LinkedIn Profile Optimizer with 13+ years of experience helping job seekers stand out and secure corporate shortlistings.",
+    "India's trusted Executive Career Strategist. ATS-optimized resumes, LinkedIn overhauls, and interview positioning that gets mid-senior professionals shortlisted faster. 13+ years. 500+ careers transformed. 5.0★ rated.",
   keywords: [
-    "Pooja Chandak",
-    "ATS Resume Writer",
-    "Resume Writer Mumbai",
+    "Pooja Malpani",
+    "Executive Career Strategist",
+    "ATS Resume Optimization India",
     "LinkedIn Profile Optimization",
-    "Cover Letter Specialist",
-    "Job Search Strategy",
-    "SWOT Resume Analysis",
+    "Career Coach Mumbai",
+    "Resume Writer India",
+    "Interview Preparation",
+    "Career Transition Strategy",
+    "Executive Positioning Consultant",
+    "Personal Brand Architect",
+    "ATS Optimization Expert",
+    "Job Search Strategy India",
   ],
-  authors: [{ name: "Pooja Chandak" }],
+  authors: [{ name: "Pooja Malpani" }],
   openGraph: {
-    title: "Pooja Chandak — Elite ATS Resume Writer & Career Branding Expert",
+    title: "Pooja Malpani — Executive Career Strategist",
     description:
-      "Transform your professional identity. Bypassing recruiter filters with highly targeted, keyword-optimized, and achievement-driven resumes by Pooja Chandak.",
+      "Stop being invisible to recruiters. ATS-optimized resumes, LinkedIn overhauls, and career positioning by India's most trusted Executive Career Strategist.",
     type: "website",
-    locale: "en_US",
-    siteName: "Pooja Chandak Career Advisory",
+    locale: "en_IN",
+    siteName: "Pooja Malpani Career Advisory",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Pooja Chandak — Elite ATS Resume Writer",
+    title: "Pooja Malpani — Executive Career Strategist",
     description:
-      "Transform your professional identity. Bypassing recruiter filters with keyword-optimized resumes by Pooja Chandak.",
+      "Stop being invisible. ATS resumes & LinkedIn optimization by Pooja Malpani.",
   },
-  robots: {
-    index: true,
-    follow: true,
-  },
+  robots: { index: true, follow: true },
 };
 
 export default function RootLayout({
@@ -65,9 +68,11 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${cormorantGaramond.variable} ${plusJakartaSans.variable} ${jetBrainsMono.variable} h-full antialiased`}
+      className={`${instrumentSerif.variable} ${plusJakartaSans.variable} ${jetBrainsMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <LenisProvider>{children}</LenisProvider>
+      </body>
     </html>
   );
 }
