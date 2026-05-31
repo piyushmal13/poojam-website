@@ -2,167 +2,185 @@
 
 import React, { useRef, useMemo } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Float, RoundedBox } from "@react-three/drei";
+import { Float, RoundedBox, Line } from "@react-three/drei";
 import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
 import * as THREE from "three";
 
-/* ── Floating ATS Resume Document ── */
-function ATSDocument() {
+interface SceneProps {
+  scrollProgress?: number;
+}
+
+function ScanningResume({ scrollProgress = 0 }: { scrollProgress: number }) {
   const groupRef = useRef<THREE.Group>(null);
 
   useFrame((state) => {
     if (!groupRef.current) return;
-    groupRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.08;
-    groupRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.3) * 0.03;
+    // Slow drift & rotate based on scroll
+    groupRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.4) * 0.05 - 0.2 + scrollProgress * 0.4;
+    groupRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.2) * 0.02;
   });
 
   return (
-    <Float speed={1.2} rotationIntensity={0.05} floatIntensity={0.3}>
-      <group ref={groupRef} position={[0, 0, 0]}>
-        {/* Resume document body */}
-        <RoundedBox args={[2.4, 3.2, 0.05]} radius={0.06} smoothness={4}>
-          <meshStandardMaterial color="#141B3A" roughness={0.4} metalness={0.1} />
+    <Float speed={1.5} rotationIntensity={0.1} floatIntensity={0.2}>
+      <group ref={groupRef} position={[-0.8, 0, 0]}>
+        {/* Wireframe Glass Document */}
+        <RoundedBox args={[2.5, 3.4, 0.06]} radius={0.05} smoothness={4}>
+          <meshPhysicalMaterial
+            color="#0E122B"
+            roughness={0.2}
+            metalness={0.9}
+            transparent
+            opacity={0.7}
+            transmission={0.4}
+            thickness={0.5}
+            clearcoat={1}
+          />
         </RoundedBox>
 
-        {/* Header bar — name section */}
-        <mesh position={[0, 1.2, 0.03]}>
-          <planeGeometry args={[2.0, 0.25]} />
-          <meshStandardMaterial color="#C9A84C" emissive="#C9A84C" emissiveIntensity={0.3} />
+        {/* Header section (Name) */}
+        <mesh position={[0, 1.3, 0.035]}>
+          <planeGeometry args={[1.8, 0.2]} />
+          <meshBasicMaterial color="#DFBF6D" />
         </mesh>
 
-        {/* Section lines — simulating resume content */}
-        {[-0.1, -0.35, -0.55, -0.75, -1.0, -1.2].map((y, i) => (
-          <mesh key={i} position={[-0.15, y + 0.6, 0.03]}>
-            <planeGeometry args={[1.3 - (i % 3) * 0.2, 0.05]} />
-            <meshStandardMaterial
-              color={i < 2 ? "#34D399" : i < 4 ? "#C9A84C" : "#F87171"}
-              emissive={i < 2 ? "#34D399" : i < 4 ? "#C9A84C" : "#F87171"}
-              emissiveIntensity={0.2}
-              transparent
-              opacity={0.7}
-            />
-          </mesh>
-        ))}
+        {/* Simulating text lines that change color based on scan progress */}
+        {[-0.1, -0.4, -0.7, -1.0, -1.3].map((y, idx) => {
+          // If the scanning laser has passed this line, it turns gold/green (optimized)
+          // The laser Y sweeps from Y=1.5 down to Y=-1.5
+          const laserY = 1.5 - scrollProgress * 3.0;
+          const isPassed = y > laserY;
 
-        {/* Keyword tags floating */}
-        {[
-          { text: "ATS", pos: [1.6, 0.8, 0.5] as [number, number, number], color: "#34D399" },
-          { text: "KEYWORDS", pos: [-1.7, 0.3, 0.3] as [number, number, number], color: "#C9A84C" },
-          { text: "METRICS", pos: [1.5, -0.4, 0.6] as [number, number, number], color: "#60A5FA" },
-          { text: "IMPACT", pos: [-1.6, -0.8, 0.4] as [number, number, number], color: "#E8D5A0" },
-        ].map((kw, i) => (
-          <Float key={i} speed={2 + i * 0.5} rotationIntensity={0.1} floatIntensity={0.5}>
-            <mesh position={kw.pos}>
-              <planeGeometry args={[0.6, 0.15]} />
-              <meshStandardMaterial
-                color={kw.color}
-                emissive={kw.color}
-                emissiveIntensity={0.5}
+          return (
+            <mesh key={idx} position={[-0.2, y + 0.6, 0.035]}>
+              <planeGeometry args={[1.5 - (idx % 2) * 0.3, 0.06]} />
+              <meshBasicMaterial
+                color={isPassed ? "#DFBF6D" : "#F87171"} // Gold vs Red
                 transparent
-                opacity={0.6}
+                opacity={0.8}
               />
             </mesh>
-          </Float>
-        ))}
+          );
+        })}
+
+        {/* Metric markers popping up */}
+        {scrollProgress > 0.4 && (
+          <group position={[1.4, 0.5, 0.2]}>
+            <mesh>
+              <planeGeometry args={[0.6, 0.25]} />
+              <meshBasicMaterial color="#DFBF6D" transparent opacity={0.6} />
+            </mesh>
+          </group>
+        )}
       </group>
     </Float>
   );
 }
 
-/* ── Scanning Laser ── */
-function ScanLaser() {
+/* ── Glowing Sweeping Laser Line ── */
+function VolumetricLaser({ scrollProgress = 0 }: { scrollProgress: number }) {
   const laserRef = useRef<THREE.Mesh>(null);
 
-  useFrame((state) => {
+  useFrame(() => {
     if (!laserRef.current) return;
-    const y = Math.sin(state.clock.elapsedTime * 0.8) * 1.6;
-    laserRef.current.position.y = y;
+    // Sweep Y coordinates matching the resume text zones
+    laserRef.current.position.y = 1.5 - scrollProgress * 3.0;
   });
 
   return (
-    <mesh ref={laserRef} position={[0, 0, 0.08]}>
-      <planeGeometry args={[2.6, 0.015]} />
-      <meshStandardMaterial
-        color="#C9A84C"
-        emissive="#C9A84C"
-        emissiveIntensity={2}
+    <mesh ref={laserRef} position={[-0.8, 0, 0.08]}>
+      <planeGeometry args={[2.8, 0.02]} />
+      <meshBasicMaterial
+        color="#DFBF6D"
         transparent
-        opacity={0.8}
+        opacity={0.9 * Math.sin(scrollProgress * Math.PI)}
       />
     </mesh>
   );
 }
 
-/* ── Score Gauge Ring ── */
-function ScoreGauge() {
+/* ── HUD Dial / Score Gauge ── */
+function BloombergHUDDial({ scrollProgress = 0 }: { scrollProgress: number }) {
+  const dialRef = useRef<THREE.Group>(null);
   const ringRef = useRef<THREE.Mesh>(null);
 
   useFrame((state) => {
-    if (!ringRef.current) return;
-    ringRef.current.rotation.z = state.clock.elapsedTime * 0.2;
+    if (!dialRef.current || !ringRef.current) return;
+    dialRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.05 - 0.3;
+    ringRef.current.rotation.z = -scrollProgress * Math.PI * 1.5;
   });
 
   return (
-    <group position={[3.5, 0, 0]}>
+    <group ref={dialRef} position={[1.6, 0, 0]}>
+      {/* Outer circular HUD ring */}
       <mesh ref={ringRef}>
-        <torusGeometry args={[0.8, 0.04, 16, 64, Math.PI * 1.5]} />
-        <meshStandardMaterial
-          color="#C9A84C"
-          emissive="#C9A84C"
-          emissiveIntensity={0.8}
-          transparent
-          opacity={0.7}
-        />
+        <torusGeometry args={[0.9, 0.025, 8, 80, Math.PI * 1.8]} />
+        <meshBasicMaterial color="#DFBF6D" transparent opacity={0.5} />
       </mesh>
-      {/* Center dot */}
+
+      {/* Solid core indicator */}
       <mesh>
         <sphereGeometry args={[0.08, 16, 16]} />
-        <meshStandardMaterial color="#34D399" emissive="#34D399" emissiveIntensity={1.5} />
+        <meshBasicMaterial color="#34D399" />
       </mesh>
+      
+      {/* Target scanning brackets */}
+      <Line
+        points={[
+          [-1.1, 1.1, 0],
+          [-0.7, 1.1, 0],
+          [-1.1, 1.1, 0],
+          [-1.1, 0.7, 0],
+        ]}
+        color="#DFBF6D"
+        lineWidth={1.5}
+        transparent
+        opacity={0.3}
+      />
+      <Line
+        points={[
+          [1.1, -1.1, 0],
+          [0.7, -1.1, 0],
+          [1.1, -1.1, 0],
+          [1.1, -0.7, 0],
+        ]}
+        color="#DFBF6D"
+        lineWidth={1.5}
+        transparent
+        opacity={0.3}
+      />
     </group>
   );
 }
 
-/* ── Scene Internals ── */
-function ATSCenterScene() {
+function ScanEngineScene({ scrollProgress = 0 }: { scrollProgress: number }) {
   return (
     <>
-      <ambientLight intensity={0.08} />
-      <pointLight position={[0, 3, 4]} intensity={0.7} color="#C9A84C" distance={20} decay={2} />
-      <pointLight position={[-3, -2, 2]} intensity={0.3} color="#4B5EAA" distance={15} decay={2} />
-      <spotLight
-        position={[0, 5, 3]}
-        angle={0.5}
-        penumbra={0.9}
-        intensity={0.4}
-        color="#C9A84C"
-        distance={20}
-        decay={2}
-      />
+      <ambientLight intensity={0.12} />
+      <pointLight position={[0, 4, 3]} intensity={0.5} color="#DFBF6D" />
+      <pointLight position={[-3, -2, 2]} intensity={0.2} color="#1C2548" />
 
-      <ATSDocument />
-      <ScanLaser />
-      <ScoreGauge />
+      <ScanningResume scrollProgress={scrollProgress} />
+      <VolumetricLaser scrollProgress={scrollProgress} />
+      <BloombergHUDDial scrollProgress={scrollProgress} />
 
       <EffectComposer>
-        <Bloom luminanceThreshold={0.15} luminanceSmoothing={0.8} intensity={0.8} mipmapBlur />
-        <Vignette offset={0.25} darkness={0.65} />
+        <Bloom luminanceThreshold={0.1} luminanceSmoothing={0.9} intensity={1.4} mipmapBlur />
+        <Vignette offset={0.3} darkness={0.8} />
       </EffectComposer>
     </>
   );
 }
 
-/* ── Exported Component ── */
-export default function SceneAtsCenter() {
+export default function SceneAtsCenter({ scrollProgress = 0 }: SceneProps) {
   return (
-    <div className="w-full h-full" style={{ minHeight: "100vh" }}>
+    <div className="w-full h-full min-h-screen bg-transparent pointer-events-none">
       <Canvas
-        camera={{ position: [0, 0, 6], fov: 50 }}
+        camera={{ position: [0, 0, 5], fov: 45 }}
         gl={{ antialias: true, alpha: true }}
-        style={{ background: "transparent" }}
         dpr={[1, 1.5]}
+        style={{ pointerEvents: "none" }}
       >
-        <ATSCenterScene />
+        <ScanEngineScene scrollProgress={scrollProgress} />
       </Canvas>
     </div>
   );

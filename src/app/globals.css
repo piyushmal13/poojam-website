@@ -635,6 +635,62 @@
 .star-gold { color: #FBBF24; fill: #FBBF24; }
 
 /* ================================================================
+   CUSTOM MAGNETIC CURSOR
+   ================================================================ */
+.custom-cursor {
+  width: 8px;
+  height: 8px;
+  background-color: #C9A84C;
+  border-radius: 50%;
+  position: fixed;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 9999;
+  transition: width 0.2s, height 0.2s, background-color 0.2s;
+}
+
+.custom-cursor-follower {
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid rgba(201, 168, 76, 0.4);
+  border-radius: 50%;
+  position: fixed;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 9998;
+  transition: transform 0.08s cubic-bezier(0.25, 1, 0.5, 1), width 0.3s, height 0.3s, border-color 0.3s;
+}
+
+/* Hover states */
+.custom-cursor.hovered {
+  width: 14px;
+  height: 14px;
+  background-color: #F0EDE6;
+}
+
+.custom-cursor-follower.hovered {
+  width: 54px;
+  height: 54px;
+  border-color: #E8D5A0;
+  background-color: rgba(201, 168, 76, 0.06);
+}
+
+/* Lock state when mouse is on clickable elements */
+@media (pointer: fine) {
+  body.custom-cursor-active,
+  body.custom-cursor-active * {
+    cursor: none !important;
+  }
+}
+
+@media (pointer: coarse) {
+  .custom-cursor,
+  .custom-cursor-follower {
+    display: none !important;
+  }
+}
+
+/* ================================================================
    PRINT STYLES — strip dark bg for accessibility
    ================================================================ */
 @media print {
