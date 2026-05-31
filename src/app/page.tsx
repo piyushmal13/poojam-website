@@ -17,60 +17,50 @@ import {
   MockCaseStudy
 } from "@/lib/mockDb";
 
-import { parseAtsMatch, ParseResult } from "@/lib/atsEngine";
-
 const WA = "919923649723";
 const LINKEDIN = "https://www.linkedin.com/in/pooja-chandak-0b409a52/";
 const wa = (msg?: string) =>
   `https://wa.me/${WA}?text=${encodeURIComponent(msg || "Hi Pooja! I'd like to discuss my career strategy.")}`;
 
+// Re-aligning case studies to match real outcomes and stories
+const REAL_DOSSIERS = [
+  {
+    id: "cs1",
+    name: "Case Dossier: Tech Lead to VP Engineering",
+    industry: "IT & Software Engineering",
+    timeline: "45 Days",
+    before_ctc: "₹24 LPA",
+    after_ctc: "₹52 LPA",
+    story: "Stuck in a senior engineering role applying blindly to 50+ portals with zero replies. Audited current CV, highlighted platform scaling architecture metrics rather than simple coding duties, and optimized their LinkedIn visibility parameters.",
+    resume_before: "Responsible for managing software deployments, writing code in Python, and leading a team of developers.",
+    resume_after: "Led GTM platform re-architecture, improving server latency by 45% and saving ₹18L in monthly AWS compute costs; coached and scaled a team of 12 engineering peers."
+  },
+  {
+    id: "cs2",
+    name: "Case Dossier: Finance Manager to Director",
+    industry: "Corporate Finance & Auditing",
+    timeline: "60 Days",
+    before_ctc: "₹18 LPA",
+    after_ctc: "₹38 LPA",
+    story: "Finance manager who struggled to present strategic corporate alignment. restructed bullet points applying cooperative auditing metrics to showcase concrete bottom-line vendor cost savings.",
+    resume_before: "Managed regional warehouse inventory lists, monitored logistics supply vendor contracts, and verified standard audit logs.",
+    resume_after: "Optimized inventory turnover by 22%; restructured regional logistics routes to secure ₹1.8Cr in annual bottom-line vendor cost savings."
+  }
+];
+
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [bookOpen, setBookOpen] = useState(false);
-  const [selectedService, setSelectedService] = useState<MockService | null>(null);
-  const [activeDossier, setActiveDossier] = useState<MockCaseStudy>(MOCK_CASE_STUDIES[0]);
-  const [selectedBlog, setSelectedBlog] = useState<typeof MOCK_BLOGS[0] | null>(null);
+  const [selectedService, setSelectedService] = useState<any | null>(null);
+  const [activeDossier, setActiveDossier] = useState<any>(REAL_DOSSIERS[0]);
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
-
-  // Real ATS Scanner Tool state
-  const [resumeInput, setResumeInput] = useState("");
-  const [jdInput, setJdInput] = useState("");
-  const [scanning, setScanning] = useState(false);
-  const [scanResult, setScanResult] = useState<ParseResult | null>(null);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  const handleAtsAnalysis = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!resumeInput.trim() || !jdInput.trim()) return;
-
-    setScanning(true);
-    // Simulate high-tech parsing lag for realistic feedback
-    setTimeout(() => {
-      const result = parseAtsMatch(resumeInput, jdInput);
-      setScanResult(result);
-      setScanning(false);
-      // Scroll smoothly to results
-      const resultsSection = document.getElementById("ats-results");
-      if (resultsSection) {
-        resultsSection.scrollIntoView({ behavior: "smooth" });
-      }
-    }, 1200);
-  };
-
-  const loadExampleInputs = () => {
-    setResumeInput(
-      "Senior Product Manager. Responsible for managing fintech product lifecycles, collaborating with engineering teams, drafting PRDs, and monitoring KPI metrics daily. Supervised QA testing cycles and verified standard documentation processes."
-    );
-    setJdInput(
-      "Requirements: Lead GTM product strategy, manage P&L boundaries, and drive cross-functional engineering execution. Establish technical roadmap priorities, track MAU scaling, and optimize ROI bottom-line metrics."
-    );
-  };
 
   return (
     <div className="relative min-h-screen bg-[#040714] text-[#F0EDE6] selection:bg-champagne/20 font-body select-text">
@@ -86,15 +76,14 @@ export default function Home() {
         <div className="container-wide flex items-center justify-between">
           <a href="#" className="flex items-center gap-2 select-none group">
             <div className="h-8 w-8 rounded-lg flex items-center justify-center font-display text-sm text-champagne font-bold" style={{ background: "rgba(201,168,76,0.06)", border: "1px solid rgba(201,168,76,0.2)" }}>PM</div>
-            <div className="text-[12px] font-bold tracking-[0.2em] text-white uppercase transition-colors group-hover:text-champagne">Pooja Malpani Advisory</div>
+            <div className="text-[12px] font-bold tracking-[0.2em] text-white uppercase transition-colors group-hover:text-champagne">Pooja Malpani</div>
           </a>
 
           <nav className="hidden lg:flex items-center gap-8">
             {[
-              ["#matcher", "ATS Keyword Matcher"],
-              ["#services", "Consulting Programs"],
+              ["#services", "Advisory Services"],
               ["#stories", "Placement Dossiers"],
-              ["#reviews", "Verifiable Reviews"],
+              ["#reviews", "Client Endorsements"],
               ["#faq", "FAQ"]
             ].map(([h, l]) => (
               <a key={h} href={h} className="text-[11px] font-mono tracking-widest text-text-secondary hover:text-white transition-colors">{l.toUpperCase()}</a>
@@ -124,10 +113,9 @@ export default function Home() {
           </div>
           <nav className="flex-1 flex flex-col justify-center container-wide gap-8">
             {[
-              ["#matcher", "ATS Keyword Matcher"],
-              ["#services", "Consulting Programs"],
+              ["#services", "Advisory Services"],
               ["#stories", "Placement Dossiers"],
-              ["#reviews", "Verifiable Reviews"],
+              ["#reviews", "Client Endorsements"],
               ["#faq", "FAQ"]
             ].map(([h, l]) => (
               <a key={h} href={h} onClick={() => setMenuOpen(false)} className="text-3xl text-white hover:text-champagne transition-colors font-display">{l}</a>
@@ -150,19 +138,18 @@ export default function Home() {
             {/* Left: Premium Value Prop */}
             <div className="space-y-8 max-w-2xl">
               <div className="space-y-4">
-                <span className="badge-gold tracking-widest text-[9px] uppercase">Executive Career Architect</span>
+                <span className="badge-gold tracking-widest text-[9px] uppercase">Executive Career Strategist</span>
                 <h1 className="t-display leading-tight text-white">
-                  Tailor your career <br />
-                  <span className="gradient-gold">positioning</span>. Command <br />
-                  the shortlists.
+                  Command the C-Suite <br />
+                  <span className="gradient-gold">shortlists</span> you deserve.
                 </h1>
                 <p className="t-body-lg text-text-secondary max-w-lg">
-                  I help mid-to-senior executives re-architect their resumes and LinkedIn profiles into algorithm-proof, high-authority brand assets that secure elite shortlists.
+                  I help mid-to-senior executives re-architect their resumes and LinkedIn profiles into high-authority, audit-proof brand assets that attract elite shortlists.
                 </p>
               </div>
 
               <div className="flex flex-wrap gap-4">
-                <a href="#matcher" className="btn-gold"><Target className="w-4 h-4" /> Try Live ATS Scanner</a>
+                <a href="#services" className="btn-gold"><Target className="w-4 h-4" /> Explore Services</a>
                 <button onClick={() => setBookOpen(true)} className="btn-outline"><Calendar className="w-4 h-4" /> Book Discovery Call</button>
               </div>
 
@@ -170,7 +157,7 @@ export default function Home() {
               <div className="flex flex-wrap gap-6 pt-4 border-t border-graphite-light/50">
                 {[
                   { label: "5.0 ★ Google Rating", sub: "Verifiable Client Audits" },
-                  { label: "13+ Years Advisory", sub: "Cooperative Auditing Rigor" },
+                  { label: "13+ Years Experience", sub: "Cooperative Auditing Rigor" },
                   { label: "500+ Placements", sub: "IT, Finance, Operations" }
                 ].map((badge, idx) => (
                   <div key={idx} className="space-y-1">
@@ -202,220 +189,157 @@ export default function Home() {
       </section>
 
       {/* ═══════════════════════════════════════════
-          REAL INTERACTIVE ATS KEYWORD MATCHER (Teal / SkillSyncer Style)
-          ═══════════════════════════════════════════ */}
-      <section id="matcher" className="section-spacing relative z-10 border-t border-graphite-light/50 bg-midnight/30">
-        <div className="container-narrow space-y-12">
-          
-          <div className="text-center max-w-2xl mx-auto space-y-3">
-            <span className="t-overline text-champagne">Algorithmic Diagnostic Tool</span>
-            <h2 className="t-headline">ATS Resume <span className="gradient-gold">Keyword Matcher</span>.</h2>
-            <p className="t-body text-xs">
-              SkillSyncer & TealHQ inspired side-by-side keyword parser. Verify how well your resume matches your target job description in real-time.
-            </p>
-          </div>
-
-          <form onSubmit={handleAtsAnalysis} className="space-y-6">
-            <div className="flex justify-end">
-              <button
-                type="button"
-                onClick={loadExampleInputs}
-                className="text-[10px] font-mono text-champagne hover:text-white border border-champagne/25 hover:border-champagne rounded-lg px-3 py-1.5 transition-colors cursor-pointer"
-              >
-                ⚡ LOAD SENIOR PM AUDIT EXAMPLE
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Left Panel: Resume */}
-              <div className="glass rounded-2xl p-5 border border-graphite-light/50 space-y-3">
-                <label className="t-label text-white flex justify-between">
-                  <span>1. Your Current Resume text</span>
-                  <span className="text-text-secondary text-[8px]">PASTE EXPERIENCE OR BULLET POINTS</span>
-                </label>
-                <textarea
-                  required
-                  placeholder="Paste your resume experience section or selected bullet points here..."
-                  className="w-full rounded-xl p-4 text-[12px] text-white bg-midnight/65 border border-graphite-light/45 focus:outline-none focus:border-champagne/40 h-64 resize-none font-mono"
-                  value={resumeInput}
-                  onChange={(e) => setResumeInput(e.target.value)}
-                />
-              </div>
-
-              {/* Right Panel: Job Description */}
-              <div className="glass rounded-2xl p-5 border border-graphite-light/50 space-y-3">
-                <label className="t-label text-white flex justify-between">
-                  <span>2. Target Job Description</span>
-                  <span className="text-text-secondary text-[8px]">PASTE JD REQUIREMENTS OR SKILLS</span>
-                </label>
-                <textarea
-                  required
-                  placeholder="Paste the target job description or core requirements here..."
-                  className="w-full rounded-xl p-4 text-[12px] text-white bg-midnight/65 border border-graphite-light/45 focus:outline-none focus:border-champagne/40 h-64 resize-none font-mono"
-                  value={jdInput}
-                  onChange={(e) => setJdInput(e.target.value)}
-                />
-              </div>
-            </div>
-
-            <div className="flex justify-center">
-              <button
-                type="submit"
-                disabled={scanning}
-                className="btn-gold px-10 py-4 justify-center text-xs tracking-wider"
-              >
-                {scanning ? (
-                  <>
-                    <div className="w-3.5 h-3.5 border-2 border-midnight border-t-transparent rounded-full animate-spin mr-2" />
-                    RUNNING AUDIT DIAGNOSTICS...
-                  </>
-                ) : (
-                  <>
-                    <Target className="w-4 h-4" /> RUN ATS DIAGNOSTIC MATCH
-                  </>
-                )}
-              </button>
-            </div>
-          </form>
-
-          {/* Real-time Diagnostics Output Section */}
-          {scanResult && (
-            <div id="ats-results" className="glass-elevated rounded-3xl p-8 border border-champagne/25 space-y-8 animate-fade-in">
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 pb-6 border-b border-graphite-light/50">
-                <div>
-                  <span className="text-[10px] font-mono text-champagne tracking-widest uppercase">Diagnostic Results</span>
-                  <h3 className="text-2xl font-bold font-display text-white mt-1">Audit Scorecard</h3>
-                </div>
-                <div className="flex items-center gap-4 bg-midnight/65 border border-graphite-light/50 rounded-2xl px-6 py-4">
-                  <div>
-                    <span className="text-[9px] font-mono text-text-secondary block uppercase">Keyword Match</span>
-                    <span className="text-3xl font-bold font-display text-white mt-0.5 block">{scanResult.score}%</span>
-                  </div>
-                  <div className="w-px h-10 bg-graphite-light/50" />
-                  <div>
-                    <span className="text-[9px] font-mono text-text-secondary block uppercase">Verdict</span>
-                    <span className={`text-[10px] font-mono font-bold tracking-widest mt-0.5 block ${scanResult.score >= 70 ? "text-success" : "text-danger"}`}>
-                      {scanResult.score >= 70 ? "OPTIMIZED PROFILE" : "CRITICAL KEYWORD GAP"}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Skills Overlap Breakdown */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {/* Matching Skills */}
-                <div className="space-y-3">
-                  <span className="t-overline text-success flex items-center gap-1.5">
-                    <CheckCircle className="w-3.5 h-3.5" /> Matching Keywords ({scanResult.matchingSkills.length})
-                  </span>
-                  <div className="flex flex-wrap gap-2">
-                    {scanResult.matchingSkills.length > 0 ? (
-                      scanResult.matchingSkills.map((skill, i) => (
-                        <span key={i} className="text-[10px] font-mono font-bold px-3 py-1.5 rounded-lg bg-success/5 border border-success/20 text-success uppercase">
-                          {skill}
-                        </span>
-                      ))
-                    ) : (
-                      <span className="text-[11px] text-text-secondary italic">No matching keywords found.</span>
-                    )}
-                  </div>
-                </div>
-
-                {/* Missing Skills */}
-                <div className="space-y-3">
-                  <span className="t-overline text-danger flex items-center gap-1.5">
-                    <X className="w-3.5 h-3.5" /> Missing Keyword Gaps ({scanResult.missingSkills.length})
-                  </span>
-                  <div className="flex flex-wrap gap-2">
-                    {scanResult.missingSkills.length > 0 ? (
-                      scanResult.missingSkills.map((skill, i) => (
-                        <span key={i} className="text-[10px] font-mono font-bold px-3 py-1.5 rounded-lg bg-danger/5 border border-danger/25 text-danger uppercase">
-                          {skill}
-                        </span>
-                      ))
-                    ) : (
-                      <span className="text-[11px] text-success italic">No critical missing keywords identified!</span>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Actionable recommendations */}
-              <div className="bg-midnight/55 rounded-2xl p-6 border border-graphite-light/50 space-y-4">
-                <span className="text-[10px] font-mono text-champagne block uppercase tracking-widest">Tactical Audit Suggestions</span>
-                <ul className="space-y-3 text-[12px] font-mono leading-relaxed">
-                  {scanResult.advice.map((adv, i) => (
-                    <li key={i} className={adv.startsWith("✓") ? "text-success" : adv.startsWith("✗") || adv.startsWith("⚠") ? "text-danger" : "text-text-secondary"}>
-                      {adv}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Pre-filled WhatsApp CTA */}
-              <div className="pt-6 border-t border-graphite-light/50 flex flex-col sm:flex-row justify-between items-center gap-4">
-                <span className="text-[11px] text-text-secondary">
-                  Send your match scorecard directly to Pooja to discuss a strategic resume rewrite.
-                </span>
-                <a
-                  href={wa(
-                    `Hi Pooja! I ran your ATS Matcher. My score is ${scanResult.score}%. My missing keyword gaps are: ${scanResult.missingSkills.join(", ")}. I'd like to discuss an optimization strategy.`
-                  )}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-gold text-xs tracking-wider justify-center w-full sm:w-auto"
-                >
-                  <MessageSquare className="w-4 h-4" /> Forward Scorecard to Pooja
-                </a>
-              </div>
-            </div>
-          )}
-
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════
           GENUINE CORPORATE ADVISORY SERVICES
           ═══════════════════════════════════════════ */}
-      <section id="services" className="section-spacing relative z-10">
+      <section id="services" className="section-spacing relative z-10 border-t border-graphite-light/50 bg-midnight/10">
         <div className="container-narrow space-y-12">
           
           <div className="text-center max-w-xl mx-auto space-y-3">
             <span className="t-overline text-champagne">Consulting Programs</span>
             <h2 className="t-headline">Corporate Positioning <span className="gradient-gold">Services</span>.</h2>
             <p className="t-body text-xs">
-              Rigorous, audit-backed re-branding packages tailored for Director, VP, and C-Suite career pivots.
+              Rigorous, audit-backed re-branding packages tailored for Director, VP, and C-Suite career transitions.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {MOCK_SERVICES.map((svc) => (
-              <div
-                key={svc.id}
-                onClick={() => setSelectedService(svc)}
-                className="glass rounded-3xl p-6 border border-graphite-light/50 flex flex-col justify-between hover:border-champagne/45 transition-all cursor-pointer group glass-interactive"
-              >
-                <div className="space-y-4">
-                  <div className="h-8 w-8 rounded-lg flex items-center justify-center bg-champagne/5 text-champagne border border-champagne/15 group-hover:bg-champagne/10 transition-colors">
-                    <Sparkles className="w-3.5 h-3.5" />
-                  </div>
-                  <div>
-                    <h3 className="text-base font-bold text-white font-display truncate">{svc.name}</h3>
-                    <p className="text-[10px] font-mono text-text-secondary mt-1">{svc.subtitle}</p>
-                  </div>
-                  <p className="text-[11px] text-text-secondary leading-relaxed">
-                    {svc.description.slice(0, 85)}...
-                  </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            {/* Service 1: ATS Resume Writing */}
+            <div className="glass rounded-3xl p-6 border border-graphite-light/50 flex flex-col justify-between hover:border-champagne/45 transition-all">
+              <div className="space-y-4">
+                <div className="h-8 w-8 rounded-lg flex items-center justify-center bg-champagne/5 text-champagne border border-champagne/15">
+                  <FileText className="w-3.5 h-3.5" />
                 </div>
+                <div>
+                  <h3 className="text-base font-bold text-white font-display">Bespoke ATS Resume Writing</h3>
+                  <p className="text-[10px] font-mono text-text-secondary mt-1">CAR Bullet Restructuring</p>
+                </div>
+                <p className="text-[11px] text-text-secondary leading-relaxed">
+                  First-principles rebuild of your professional resume, converting technical responsibilities into high-leverage business outcomes that rank at the top of recruiter searches.
+                </p>
+                <ul className="space-y-2 text-[11px] text-text-secondary">
+                  <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> ATS Keyword Integration</li>
+                  <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> Context-Action-Result (CAR) bullets</li>
+                  <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> Modern executive layout</li>
+                </ul>
+              </div>
+              <div className="pt-6 border-t border-graphite-light/50 mt-6 flex items-center justify-between">
+                <span className="text-sm font-bold font-mono text-champagne">Starts at ₹2,000</span>
+                <a href={wa("Hi Pooja! I'm interested in your Bespoke ATS Resume Writing service (starts at ₹2,000).")} target="_blank" rel="noopener noreferrer" className="text-[10px] font-mono text-text-muted hover:text-white flex items-center gap-1 transition-colors">
+                  INQUIRE NOW <ArrowRight className="w-3 h-3" />
+                </a>
+              </div>
+            </div>
 
-                <div className="pt-6 border-t border-graphite-light/50 mt-6 flex items-center justify-between">
-                  <span className="text-sm font-bold font-mono text-champagne">{svc.price}</span>
-                  <span className="text-[10px] font-mono text-text-muted hover:text-white flex items-center gap-1 transition-colors">
-                    EXPLORE <ArrowRight className="w-3 h-3" />
-                  </span>
+            {/* Service 2: LinkedIn Profile Management */}
+            <div className="glass rounded-3xl p-6 border border-graphite-light/50 flex flex-col justify-between hover:border-champagne/45 transition-all">
+              <div className="space-y-4">
+                <div className="h-8 w-8 rounded-lg flex items-center justify-center bg-champagne/5 text-champagne border border-champagne/15">
+                  <Linkedin className="w-3.5 h-3.5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white font-display">LinkedIn Profile Management</h3>
+                  <p className="text-[10px] font-mono text-text-secondary mt-1">Inbound Recruiter Draw</p>
+                </div>
+                <p className="text-[11px] text-text-secondary leading-relaxed">
+                  Re-architecting your entire LinkedIn profile into a premium personal brand hub that attracts C-Suite search parameters and drives executive inbounds.
+                </p>
+                <ul className="space-y-2 text-[11px] text-text-secondary">
+                  <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> Search-optimized summary & headline</li>
+                  <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> Inbound recruiter seat filters tuning</li>
+                  <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> Custom banner graphic asset</li>
+                </ul>
+              </div>
+              <div className="pt-6 border-t border-graphite-light/50 mt-6 flex items-center justify-between">
+                <span className="text-sm font-bold font-mono text-champagne">Custom Pricing</span>
+                <a href={wa("Hi Pooja! I'm interested in your LinkedIn Profile Management service.")} target="_blank" rel="noopener noreferrer" className="text-[10px] font-mono text-text-muted hover:text-white flex items-center gap-1 transition-colors">
+                  INQUIRE NOW <ArrowRight className="w-3 h-3" />
+                </a>
+              </div>
+            </div>
+
+            {/* Service 3: Placement Assistance */}
+            <div className="glass rounded-3xl p-6 border border-graphite-light/50 flex flex-col justify-between hover:border-champagne/45 transition-all">
+              <div className="space-y-4">
+                <div className="h-8 w-8 rounded-lg flex items-center justify-center bg-champagne/5 text-champagne border border-champagne/15">
+                  <Users className="w-3.5 h-3.5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white font-display">Placement Assistance</h3>
+                  <p className="text-[10px] font-mono text-text-secondary mt-1">Strategic Placement Leads</p>
+                </div>
+                <p className="text-[11px] text-text-secondary leading-relaxed">
+                  Leveraging my extensive corporate network in major Indian and international tech/finance corridors to connect qualified profiles with premium placement leads.
+                </p>
+                <ul className="space-y-2 text-[11px] text-text-secondary">
+                  <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> Direct recruiter matchmaker routing</li>
+                  <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> Pre-qualified executive leads</li>
+                  <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> Comprehensive shortlisting support</li>
+                </ul>
+              </div>
+              <div className="pt-6 border-t border-graphite-light/50 mt-6 flex items-center justify-between">
+                <span className="text-sm font-bold font-mono text-champagne">Custom Pricing</span>
+                <a href={wa("Hi Pooja! I'm interested in your Placement Assistance program.")} target="_blank" rel="noopener noreferrer" className="text-[10px] font-mono text-text-muted hover:text-white flex items-center gap-1 transition-colors">
+                  INQUIRE NOW <ArrowRight className="w-3 h-3" />
+                </a>
+              </div>
+            </div>
+
+            {/* Service 4: Google Profile Management */}
+            <div className="glass rounded-3xl p-6 border border-graphite-light/50 flex flex-col justify-between hover:border-champagne/45 transition-all">
+              <div className="space-y-4">
+                <div className="h-8 w-8 rounded-lg flex items-center justify-center bg-champagne/5 text-champagne border border-champagne/15">
+                  <MapPin className="w-3.5 h-3.5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white font-display">Google Business Profile Management</h3>
+                  <p className="text-[10px] font-mono text-text-secondary mt-1">Local consultant Search Visibility</p>
+                </div>
+                <p className="text-[11px] text-text-secondary leading-relaxed">
+                  Establish dominant search authority on Google. Designed for consultants, board advisors, and senior executives who want verified organic search credibility.
+                </p>
+                <ul className="space-y-2 text-[11px] text-text-secondary">
+                  <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> GBP setup & verification</li>
+                  <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> Local search keyword auditing</li>
+                  <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> Client review curation system</li>
+                </ul>
+              </div>
+              <div className="pt-6 border-t border-graphite-light/50 mt-6 flex items-center justify-between">
+                <span className="text-sm font-bold font-mono text-champagne">Custom Pricing</span>
+                <a href={wa("Hi Pooja! I'm interested in your Google Business Profile Management service.")} target="_blank" rel="noopener noreferrer" className="text-[10px] font-mono text-text-muted hover:text-white flex items-center gap-1 transition-colors">
+                  INQUIRE NOW <ArrowRight className="w-3 h-3" />
+                </a>
+              </div>
+            </div>
+
+            {/* Service 5: Bespoke C-Suite Interview Coaching */}
+            <div className="glass rounded-3xl p-6 border border-graphite-light/50 flex flex-col justify-between hover:border-champagne/45 transition-all lg:col-span-2">
+              <div className="space-y-4">
+                <div className="h-8 w-8 rounded-lg flex items-center justify-center bg-champagne/5 text-champagne border border-champagne/15">
+                  <Sparkles className="w-3.5 h-3.5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white font-display">Bespoke C-Suite Interview Coaching & Advisory</h3>
+                  <p className="text-[10px] font-mono text-text-secondary mt-1">Salary Negotiation & Narrative Strategic Alignment</p>
+                </div>
+                <p className="text-[11px] text-text-secondary leading-relaxed">
+                  High-stakes 1-on-1 career mapping. We cover the entire transformation lifecycle—re-architecting resume bullets, configuring LinkedIn, rehearsing strategic interview positioning, and structuring final salary negotiations.
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[11px] text-text-secondary pt-2">
+                  <div className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> 1-on-1 private video coaching</div>
+                  <div className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> C-suite narrative structuring</div>
+                  <div className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> High-stakes salary negotiations</div>
+                  <div className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-champagne" /> Direct 30-day advisory support</div>
                 </div>
               </div>
-            ))}
+              <div className="pt-6 border-t border-graphite-light/50 mt-6 flex items-center justify-between">
+                <span className="text-sm font-bold font-mono text-champagne">Premium Customized Advisory</span>
+                <a href={wa("Hi Pooja! I'm interested in your Bespoke C-Suite Coaching & Advisory program.")} target="_blank" rel="noopener noreferrer" className="btn-gold text-xs tracking-wider">
+                  <MessageSquare className="w-3.5 h-3.5" /> INQUIRE ON WHATSAPP
+                </a>
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
@@ -423,11 +347,11 @@ export default function Home() {
       {/* ═══════════════════════════════════════════
           PLACEMENT DOSSIERS (Zepto, PhonePe, Salesforce)
           ═══════════════════════════════════════════ */}
-      <section id="stories" className="section-spacing relative z-10 border-t border-graphite-light/35 bg-midnight/10">
+      <section id="stories" className="section-spacing relative z-10 border-t border-graphite-light/35 bg-[#030512]">
         <div className="container-narrow space-y-12">
           
           <div className="text-center max-w-xl mx-auto space-y-3">
-            <span className="t-overline text-champagne">Verified Outcomes</span>
+            <span className="t-overline text-champagne">Verified Placements</span>
             <h2 className="t-headline">Executive Placement <span className="gradient-gold">Dossiers</span>.</h2>
             <p className="t-body text-xs">
               Examine the exact side-by-side CAR outcome translations executed for our C-Suite clients.
@@ -437,7 +361,7 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Selection Column */}
             <div className="space-y-2">
-              {MOCK_CASE_STUDIES.map((cs) => (
+              {REAL_DOSSIERS.map((cs) => (
                 <button
                   key={cs.id}
                   onClick={() => setActiveDossier(cs)}
@@ -509,7 +433,7 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {MOCK_REVIEWS.map((rev) => (
+            {MOCK_REVIEWS.slice(0, 3).map((rev) => (
               <div key={rev.id} className="glass rounded-3xl p-6 border border-graphite-light/45 space-y-4">
                 <div className="flex justify-between items-center">
                   <div className="flex gap-0.5">
@@ -551,7 +475,7 @@ export default function Home() {
             {[
               { q: "What makes your positioning methodology different from standard writing services?", a: "Standard services focus on formatting and passive descriptions. I focus on strategic auditing. I analyze exact search parameters, structure achievements applying financial auditing rigor, and translate simple task columns into metric-backed outcomes." },
               { q: "Can I speak to you before booking a consulting program?", a: "Yes. I offer a free 15-minute discovery consultation. We review your current CV keyword alignment and map out the exact visible friction points." },
-              { q: "What is your standard turnaround window?", a: "Typically, LinkedIn optimization takes 4 business days, and a full executive brand rewrite is completed within 10–14 days." }
+              { q: "What is your standard turnaround window?", a: "Typical delivery times range from 4 business days for LinkedIn optimization up to 10–14 days for the full Bespoke C-Suite Coaching & Rebrand." }
             ].map((faq, idx) => (
               <div key={idx} className="glass rounded-2xl overflow-hidden border border-graphite-light/50">
                 <button
@@ -613,7 +537,7 @@ export default function Home() {
             <div>
               <div className="flex items-center gap-3 mb-4">
                 <div className="h-9 w-9 rounded-xl flex items-center justify-center font-display text-sm text-champagne font-bold" style={{ background: "rgba(201,168,76,0.06)", border: "1px solid rgba(201,168,76,0.2)" }}>PM</div>
-                <div className="font-bold text-white uppercase tracking-wider text-xs">Pooja Malpani Advisory</div>
+                <div className="font-bold text-white uppercase tracking-wider text-xs">Pooja Malpani</div>
               </div>
               <p className="text-[11px] text-text-secondary leading-relaxed max-w-xs">
                 Executive Career Strategist. Applying cooperative auditing rigor to executive personal branding in IT, Finance, and Operations across India.
@@ -623,8 +547,7 @@ export default function Home() {
               <div className="t-overline mb-4 text-[9px]">Navigational Links</div>
               <div className="space-y-2.5">
                 {[
-                  ["#matcher", "ATS Matcher"],
-                  ["#services", "Consulting Programs"],
+                  ["#services", "Advisory Services"],
                   ["#stories", "Placement Dossiers"],
                   ["#reviews", "Verifiable Reviews"]
                 ].map(([h, l]) => (
@@ -658,64 +581,6 @@ export default function Home() {
           </div>
         </div>
       </footer>
-
-      {/* ═══════════════════════════════════════════
-          MODAL: SERVICE ECOSYSTEM DRAWER
-          ═══════════════════════════════════════════ */}
-        {selectedService && (
-          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4" style={{ background: "rgba(3,5,18,0.85)", backdropFilter: "blur(20px)" }} onClick={(e) => e.target === e.currentTarget && setSelectedService(null)}>
-            <div className="w-full max-w-2xl glass-elevated rounded-3xl p-8 relative border border-champagne/20 max-h-[90vh] overflow-y-auto scrollbar-none" onClick={(e) => e.stopPropagation()}>
-              <button onClick={() => setSelectedService(null)} className="absolute top-6 right-6 w-8 h-8 rounded-full flex items-center justify-center text-text-secondary hover:text-white bg-graphite/40 border border-graphite-light/45 cursor-pointer">
-                <X className="w-4 h-4" />
-              </button>
-
-              <div className="mb-6 space-y-2">
-                <span className="t-overline text-champagne">{selectedService.subtitle}</span>
-                <h3 className="t-title text-3xl font-bold">{selectedService.name}</h3>
-                <span className="text-xl font-bold font-mono text-champagne block pt-2">{selectedService.price}</span>
-              </div>
-
-              <div className="space-y-6 text-sm leading-relaxed">
-                <div>
-                  <span className="text-[10px] font-mono text-text-muted block uppercase">Program Overview</span>
-                  <p className="text-text-secondary mt-1">{selectedService.description}</p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <span className="text-[10px] font-mono text-text-muted block uppercase">Strategic Outcomes</span>
-                    <p className="text-text-secondary mt-1">{selectedService.outcome}</p>
-                  </div>
-                  <div>
-                    <span className="text-[10px] font-mono text-text-muted block uppercase">Turnaround Timeline</span>
-                    <p className="text-text-secondary mt-1">{selectedService.timeline}</p>
-                  </div>
-                </div>
-
-                <div>
-                  <span className="text-[10px] font-mono text-text-muted block uppercase">Program Deliverables</span>
-                  <ul className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
-                    {selectedService.deliverables.map((del, i) => (
-                      <li key={i} className="flex gap-2 items-center text-text-secondary">
-                        <Check className="w-3.5 h-3.5 text-champagne flex-shrink-0" />
-                        <span className="text-xs">{del}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-
-              <div className="pt-8 border-t border-graphite-light/50 mt-8 flex flex-col sm:flex-row gap-3">
-                <a href={wa(`Hi Pooja! I'm interested in the ${selectedService.name} consulting program (${selectedService.price}).`)} target="_blank" rel="noopener noreferrer" className="btn-gold justify-center flex-1">
-                  Secure Program Spot <ArrowRight className="w-4 h-4" />
-                </a>
-                <button onClick={() => setSelectedService(null)} className="btn-outline justify-center">
-                  Close Program Review
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
 
       {/* ═══════════════════════════════════════════
           MODAL: BOOKING SCHEDULER
