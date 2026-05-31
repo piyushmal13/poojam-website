@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, useRef, Suspense, lazy } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
 import {
   Star, CheckCircle, X, ArrowRight, MessageSquare, Calendar, Shield,
   Users, Zap, FileText, Linkedin, Phone, MapPin, Clock, Quote, Menu,
@@ -18,55 +17,12 @@ import {
   MockCaseStudy
 } from "@/lib/mockDb";
 
-/* ── Lazy-load all 3D WebGL canvases for optimal performance ── */
-const SceneHiddenProfessional = lazy(() => import("@/components/scenes/SceneHiddenProfessional"));
-const SceneIndiaNetwork = lazy(() => import("@/components/scenes/SceneIndiaNetwork"));
-const SceneAtsCenter = lazy(() => import("@/components/scenes/SceneAtsCenter"));
-const SceneLinkedInEngine = lazy(() => import("@/components/scenes/SceneLinkedInEngine"));
+import { parseAtsMatch, ParseResult } from "@/lib/atsEngine";
 
 const WA = "919923649723";
 const LINKEDIN = "https://www.linkedin.com/in/pooja-chandak-0b409a52/";
 const wa = (msg?: string) =>
   `https://wa.me/${WA}?text=${encodeURIComponent(msg || "Hi Pooja! I'd like to discuss my career strategy.")}`;
-
-/* 3D Scene Loading Fallback Skeleton */
-function SceneSkeleton() {
-  return (
-    <div className="w-full h-full flex items-center justify-center scene-skeleton rounded-3xl">
-      <div className="text-center space-y-3">
-        <div className="w-10 h-10 border-2 border-champagne border-t-transparent rounded-full mx-auto animate-spin" />
-        <p className="t-label text-[10px]">Assembling 3D Experience...</p>
-      </div>
-    </div>
-  );
-}
-
-/* ── Scroll progress calculation hook ── */
-function useScrollProgress(ref: React.RefObject<HTMLElement | null>) {
-  const [progress, setProgress] = useState(0);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const el = ref.current;
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
-      
-      const totalHeight = rect.height + windowHeight;
-      const currentScroll = windowHeight - rect.top;
-      const rawProgress = currentScroll / totalHeight;
-      const clamped = Math.max(0, Math.min(1, rawProgress));
-      setProgress(clamped);
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll(); // Initial run
-
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [ref]);
-
-  return progress;
-}
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -77,49 +33,47 @@ export default function Home() {
   const [selectedBlog, setSelectedBlog] = useState<typeof MOCK_BLOGS[0] | null>(null);
   const [faqOpen, setFaqOpen] = useState<number | null>(null);
 
-  // ATS scanner simulation state
+  // Real ATS Scanner Tool state
+  const [resumeInput, setResumeInput] = useState("");
+  const [jdInput, setJdInput] = useState("");
   const [scanning, setScanning] = useState(false);
-  const [scanStep, setScanStep] = useState(0);
-  const [scanScore, setScanScore] = useState(45);
-
-  // Define section references for scroll triggers
-  const sec1Ref = useRef<HTMLDivElement>(null);
-  const sec2Ref = useRef<HTMLDivElement>(null);
-  const sec3Ref = useRef<HTMLDivElement>(null);
-  const sec6Ref = useRef<HTMLDivElement>(null);
-
-  const sec1Progress = useScrollProgress(sec1Ref);
-  const sec2Progress = useScrollProgress(sec2Ref);
-  const sec3Progress = useScrollProgress(sec3Ref);
-  const sec6Progress = useScrollProgress(sec6Ref);
+  const [scanResult, setScanResult] = useState<ParseResult | null>(null);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 100);
+    const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const triggerScan = () => {
-    if (scanning) return;
+  const handleAtsAnalysis = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!resumeInput.trim() || !jdInput.trim()) return;
+
     setScanning(true);
-    setScanStep(1);
-    setScanScore(45);
-
-    let step = 1;
-    const interval = setInterval(() => {
-      step++;
-      setScanStep(step);
-      setScanScore((prev) => Math.min(prev + Math.floor(Math.random() * 12) + 5, 92));
-
-      if (step >= 5) {
-        clearInterval(interval);
-        setScanning(false);
+    // Simulate high-tech parsing lag for realistic feedback
+    setTimeout(() => {
+      const result = parseAtsMatch(resumeInput, jdInput);
+      setScanResult(result);
+      setScanning(false);
+      // Scroll smoothly to results
+      const resultsSection = document.getElementById("ats-results");
+      if (resultsSection) {
+        resultsSection.scrollIntoView({ behavior: "smooth" });
       }
-    }, 900);
+    }, 1200);
+  };
+
+  const loadExampleInputs = () => {
+    setResumeInput(
+      "Senior Product Manager. Responsible for managing fintech product lifecycles, collaborating with engineering teams, drafting PRDs, and monitoring KPI metrics daily. Supervised QA testing cycles and verified standard documentation processes."
+    );
+    setJdInput(
+      "Requirements: Lead GTM product strategy, manage P&L boundaries, and drive cross-functional engineering execution. Establish technical roadmap priorities, track MAU scaling, and optimize ROI bottom-line metrics."
+    );
   };
 
   return (
-    <div className="relative min-h-screen bg-[#030512] text-[#F0EDE6] overflow-x-hidden selection:bg-champagne/20 select-none">
+    <div className="relative min-h-screen bg-[#040714] text-[#F0EDE6] selection:bg-champagne/20 font-body select-text">
       
       {/* Volumetric ambient background noise / light cone grid */}
       <div className="fixed inset-0 z-0 pointer-events-none opacity-20 bg-[radial-gradient(ellipse_at_top,_var(--color-graphite-light),_transparent)]" />
@@ -128,28 +82,31 @@ export default function Home() {
       {/* ═══════════════════════════════════════════
           NAVIGATION HEADER
           ═══════════════════════════════════════════ */}
-      <header className={`fixed top-0 inset-x-0 z-50 transition-all duration-700 ${scrolled ? "bg-[#030512]/90 backdrop-blur-2xl border-b border-graphite-light/35 py-3" : "py-6 bg-transparent"}`}>
+      <header className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ${scrolled ? "bg-[#040714]/92 backdrop-blur-2xl border-b border-graphite-light/35 py-3" : "py-6 bg-transparent"}`}>
         <div className="container-wide flex items-center justify-between">
-          <a href="#" className="flex items-center gap-3 select-none">
-            <div className="h-9 w-9 rounded-xl flex items-center justify-center font-display text-sm text-champagne font-bold" style={{ background: "rgba(201,168,76,0.06)", border: "1px solid rgba(201,168,76,0.25)" }}>PM</div>
-            <div>
-              <div className="text-[11px] font-bold tracking-[0.25em] text-white uppercase">Pooja Malpani</div>
-              <div className="t-label text-[8px] mt-0.5">Executive Career Strategist</div>
-            </div>
+          <a href="#" className="flex items-center gap-2 select-none group">
+            <div className="h-8 w-8 rounded-lg flex items-center justify-center font-display text-sm text-champagne font-bold" style={{ background: "rgba(201,168,76,0.06)", border: "1px solid rgba(201,168,76,0.2)" }}>PM</div>
+            <div className="text-[12px] font-bold tracking-[0.2em] text-white uppercase transition-colors group-hover:text-champagne">Pooja Malpani Advisory</div>
           </a>
 
           <nav className="hidden lg:flex items-center gap-8">
-            {[["#invisible", "Filtration"], ["#network", "Placement Network"], ["#grader", "ATS Grader"], ["#dossier", "Transformation Archive"], ["#services", "Consulting Programs"], ["#faq", "Advisory FAQ"]].map(([h, l]) => (
-              <a key={h} href={h} className="text-[12px] font-mono tracking-widest text-text-secondary hover:text-white transition-colors">{l.toUpperCase()}</a>
+            {[
+              ["#matcher", "ATS Keyword Matcher"],
+              ["#services", "Consulting Programs"],
+              ["#stories", "Placement Dossiers"],
+              ["#reviews", "Verifiable Reviews"],
+              ["#faq", "FAQ"]
+            ].map(([h, l]) => (
+              <a key={h} href={h} className="text-[11px] font-mono tracking-widest text-text-secondary hover:text-white transition-colors">{l.toUpperCase()}</a>
             ))}
           </nav>
 
           <div className="flex items-center gap-3">
-            <a href={wa()} target="_blank" rel="noopener noreferrer" className="hidden sm:flex btn-outline" style={{ padding: "0.55rem 1.35rem", fontSize: "0.7rem" }}>
+            <a href={wa()} target="_blank" rel="noopener noreferrer" className="hidden sm:flex btn-outline" style={{ padding: "0.5rem 1.25rem", fontSize: "0.7rem" }}>
               <MessageSquare className="w-3.5 h-3.5" /> WhatsApp
             </a>
-            <button onClick={() => setBookOpen(true)} className="btn-gold" style={{ padding: "0.55rem 1.35rem", fontSize: "0.7rem" }}>
-              <Calendar className="w-3.5 h-3.5" /> Discovery Call
+            <button onClick={() => setBookOpen(true)} className="btn-gold" style={{ padding: "0.5rem 1.25rem", fontSize: "0.7rem" }}>
+              <Calendar className="w-3.5 h-3.5" /> Book Consultation
             </button>
             <button onClick={() => setMenuOpen(true)} className="lg:hidden p-2 text-text-secondary hover:text-white" aria-label="Menu">
               <Menu className="w-5 h-5" />
@@ -159,310 +116,276 @@ export default function Home() {
       </header>
 
       {/* Mobile menu panel */}
-      <AnimatePresence>
-        {menuOpen && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 bg-[#030512]/98 backdrop-blur-2xl flex flex-col" data-lenis-prevent>
-            <div className="container-wide flex justify-between items-center py-5">
-              <span className="t-overline">Advisory Menu</span>
-              <button onClick={() => setMenuOpen(false)} className="p-2 text-text-secondary hover:text-white"><X className="w-5 h-5" /></button>
-            </div>
-            <nav className="flex-1 flex flex-col justify-center container-wide gap-8">
-              {[["#invisible", "Filtration"], ["#network", "Placement Network"], ["#grader", "ATS Grader"], ["#dossier", "Transformation Archive"], ["#services", "Consulting Programs"], ["#faq", "Advisory FAQ"]].map(([h, l], i) => (
-                <motion.a key={h} href={h} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0, transition: { delay: i * 0.05 } }} onClick={() => setMenuOpen(false)} className="text-3xl text-white hover:text-champagne transition-colors font-display">{l}</motion.a>
-              ))}
-            </nav>
-            <div className="container-wide pb-10 flex flex-col gap-3">
-              <a href={wa()} target="_blank" rel="noopener noreferrer" className="btn-outline w-full justify-center"><MessageSquare className="w-4 h-4" /> WhatsApp</a>
-              <button onClick={() => { setBookOpen(true); setMenuOpen(false); }} className="btn-gold w-full justify-center"><Calendar className="w-4 h-4" /> Discovery Call</button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* ═══════════════════════════════════════════
-          SECTION 01: THE INVISIBLE PROFESSIONAL (150vh)
-          ═══════════════════════════════════════════ */}
-      <section id="invisible" ref={sec1Ref} className="relative min-h-[150vh] overflow-hidden bg-transparent">
-        {/* Sticky WebGL Canvas Container */}
-        <div className="absolute inset-0 sticky top-0 h-screen z-0 pointer-events-none">
-          <Suspense fallback={<SceneSkeleton />}>
-            <SceneHiddenProfessional scrollProgress={sec1Progress} />
-          </Suspense>
-        </div>
-
-        {/* Cinematic Content Overlays */}
-        <div className="relative z-10 min-h-[150vh] flex flex-col justify-between pointer-events-none">
-          {/* Headline Stage */}
-          <div className="h-screen flex items-center justify-center container-narrow text-center">
-            <div className="space-y-6 max-w-4xl">
-              <span className="badge-gold tracking-widest text-[9px]">PROJECT BLACK DIAMOND</span>
-              <h1 className="t-display leading-none">
-                You are not <br />
-                being rejected. <br />
-                <span className="gradient-gold">You are being filtered.</span>
-              </h1>
-              <p className="t-body max-w-xl mx-auto text-text-secondary">
-                Over 75% of executive-tier resumes are automatically dropped by Taleo & Workday before a single human laying eyes on them. Re-align your positioning.
-              </p>
-            </div>
+      {menuOpen && (
+        <div className="fixed inset-0 z-50 bg-[#040714]/98 backdrop-blur-2xl flex flex-col">
+          <div className="container-wide flex justify-between items-center py-5">
+            <span className="t-overline">Advisory Menu</span>
+            <button onClick={() => setMenuOpen(false)} className="p-2 text-text-secondary hover:text-white"><X className="w-5 h-5" /></button>
           </div>
-
-          {/* Dissolve State Indicator */}
-          <div className="h-[50vh] flex items-center justify-center text-center pb-20">
-            <div className="space-y-2">
-              <span className="text-[10px] font-mono text-danger tracking-widest uppercase">95% Profiles Extinguished</span>
-              <div className="w-32 h-[1px] bg-danger/30 mx-auto" />
-            </div>
+          <nav className="flex-1 flex flex-col justify-center container-wide gap-8">
+            {[
+              ["#matcher", "ATS Keyword Matcher"],
+              ["#services", "Consulting Programs"],
+              ["#stories", "Placement Dossiers"],
+              ["#reviews", "Verifiable Reviews"],
+              ["#faq", "FAQ"]
+            ].map(([h, l]) => (
+              <a key={h} href={h} onClick={() => setMenuOpen(false)} className="text-3xl text-white hover:text-champagne transition-colors font-display">{l}</a>
+            ))}
+          </nav>
+          <div className="container-wide pb-10 flex flex-col gap-3">
+            <a href={wa()} target="_blank" rel="noopener noreferrer" className="btn-outline w-full justify-center"><MessageSquare className="w-4 h-4" /> WhatsApp</a>
+            <button onClick={() => { setBookOpen(true); setMenuOpen(false); }} className="btn-gold w-full justify-center"><Calendar className="w-4 h-4" /> Book Consultation</button>
           </div>
         </div>
-      </section>
+      )}
 
       {/* ═══════════════════════════════════════════
-          SECTION 02: INDIA SUCCESS NETWORK (3D MAP)
+          HERO SECTION (Clarity, Value, Professionalism)
           ═══════════════════════════════════════════ */}
-      <section id="network" ref={sec2Ref} className="relative min-h-screen bg-transparent section-spacing">
-        <div className="absolute inset-0 sticky top-0 h-screen z-0">
-          <Suspense fallback={<SceneSkeleton />}>
-            <SceneIndiaNetwork scrollProgress={sec2Progress} />
-          </Suspense>
-        </div>
-
-        <div className="container-wide relative z-10 pointer-events-none min-h-screen flex items-center">
-          <div className="max-w-md space-y-6">
-            <span className="t-overline text-champagne">Success Networks</span>
-            <h2 className="t-headline">Mumbai to <span className="gradient-gold">Global Nodes</span>.</h2>
-            <p className="t-body leading-relaxed">
-              Every gold line represents a complete career transition. From local hubs to sovereign international consulting centers like Dubai, Singapore, and London.
-            </p>
-            <div className="pt-4 pointer-events-auto">
-              <a href={wa("Hi Pooja! I'm interested in discussing executive transitions.")} target="_blank" rel="noopener noreferrer" className="btn-gold inline-flex items-center gap-2">
-                Trace Your Route <ArrowUpRight className="w-4 h-4" />
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════
-          SECTION 03: THE CAREER INTELLIGENCE ENGINE (HUD Scanner)
-          ═══════════════════════════════════════════ */}
-      <section id="grader" ref={sec3Ref} className="relative min-h-screen bg-transparent section-spacing">
-        <div className="absolute inset-0 sticky top-0 h-screen z-0 pointer-events-none">
-          <Suspense fallback={<SceneSkeleton />}>
-            <SceneAtsCenter scrollProgress={sec3Progress} />
-          </Suspense>
-        </div>
-
-        <div className="container-wide relative z-10 min-h-screen flex items-center justify-end">
-          <div className="w-full max-w-lg glass-elevated rounded-3xl p-8 border border-champagne/15 space-y-6">
-            <span className="t-overline">ATS Grader Terminal</span>
-            <h3 className="t-title text-2xl font-bold">Simulate Algorithm Parsing</h3>
-            <p className="text-[12px] text-text-secondary leading-relaxed">
-              Watch how automated parsing translation converts passive descriptions into structured corporate ROI impact bullets.
-            </p>
-
-            <div className="space-y-4">
-              {/* Score Display */}
-              <div className="flex justify-between items-center p-4 rounded-xl bg-midnight/65 border border-graphite-light/50">
-                <div>
-                  <span className="text-[9px] font-mono text-text-muted block">ALGORITHM SCORE</span>
-                  <span className="text-2xl font-bold font-display text-white mt-1 block">
-                    {scanScore}%
-                  </span>
-                </div>
-                <div>
-                  <span className="text-[9px] font-mono text-text-muted block">PARSING STATUS</span>
-                  <span className={`text-[10px] font-mono font-bold tracking-widest mt-1 block ${scanScore > 80 ? "text-success" : "text-danger"}`}>
-                    {scanning ? "SCANNING..." : scanScore > 80 ? "PASSED SHORTLIST" : "FILTERED/REJECTED"}
-                  </span>
-                </div>
-              </div>
-
-              {/* Red-to-Gold Translation logs */}
-              <div className="rounded-xl border border-graphite-light/50 p-4 min-h-[120px] bg-midnight/50 text-[11px] font-mono leading-relaxed space-y-3">
-                {scanStep === 0 && (
-                  <p className="text-text-muted italic">Click 'Trigger Audit Simulation' to verify parsing translations...</p>
-                )}
-                {scanStep >= 1 && (
-                  <p className="text-danger">✗ [FAILED] Unoptimized phrasing: "Responsible for managing software deployments and leading teams."</p>
-                )}
-                {scanStep >= 3 && (
-                  <p className="text-champagne-light">⚡ [PARSING] Analyzing business parameters...</p>
-                )}
-                {scanStep >= 4 && (
-                  <p className="text-success">✓ [TRANSLATED] Optimized outcome: "Led GTM platform re-architecture, improving server latency by 45% and saving ₹18L in AWS compute costs."</p>
-                )}
-              </div>
-
-              <button
-                onClick={triggerScan}
-                disabled={scanning}
-                className="btn-gold w-full justify-center text-xs tracking-widest"
-              >
-                {scanning ? "Processing Audit..." : "Trigger Audit Simulation"}
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════
-          SECTION 04: FOUNDER CINEMATIC REVEAL
-          ═══════════════════════════════════════════ */}
-      <section className="section-spacing relative z-10" style={{ background: "linear-gradient(to bottom, transparent, #030512 80%)" }}>
-        <div className="container-narrow">
+      <section className="relative min-h-[90vh] flex items-center pt-28 pb-16 overflow-hidden">
+        <div className="container-wide relative z-10 w-full">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            {/* Left Column: Volumetric portrait */}
-            <div className="relative flex justify-center">
-              <div className="relative w-full max-w-sm" style={{ filter: "drop-shadow(0 40px 100px rgba(0,0,0,0.85))" }}>
-                {/* Spotlight background behind portrait */}
-                <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_center,_var(--color-champagne-light),_transparent)] opacity-10 blur-xl scale-125" />
-                <div className="relative z-10 rounded-3xl overflow-hidden" style={{ aspectRatio: "3/4", border: "1.5px solid rgba(201,168,76,0.25)", background: "linear-gradient(135deg, #0A0E23, #030512)" }}>
-                  <Image src="/pooja-headshot.png" alt="Pooja Malpani" fill priority className="object-cover object-top" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#030512] via-transparent to-transparent opacity-85" />
-                  <div className="absolute bottom-6 left-6 right-6 glass-elevated rounded-2xl p-4 border border-champagne/15">
-                    <span className="text-[9px] font-mono text-champagne tracking-wider block">EXECUTIVE ADVISOR</span>
-                    <span className="text-base font-bold text-white font-display block">Pooja Malpani</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Right Column: Floating glass credentials */}
-            <div className="space-y-8">
+            
+            {/* Left: Premium Value Prop */}
+            <div className="space-y-8 max-w-2xl">
               <div className="space-y-4">
-                <span className="t-overline text-champagne">Founder Credentials</span>
-                <h2 className="t-headline">The Auditing <br /><span className="gradient-gold">Precision</span>.</h2>
-                <p className="t-body">
-                  For 13+ years, I have studied how automated filters parse candidates. I bring standard cooperative auditing metrics to career documentation — translating tasks into high-leverage outcomes.
+                <span className="badge-gold tracking-widest text-[9px] uppercase">Executive Career Architect</span>
+                <h1 className="t-display leading-tight text-white">
+                  Tailor your career <br />
+                  <span className="gradient-gold">positioning</span>. Command <br />
+                  the shortlists.
+                </h1>
+                <p className="t-body-lg text-text-secondary max-w-lg">
+                  I help mid-to-senior executives re-architect their resumes and LinkedIn profiles into algorithm-proof, high-authority brand assets that secure elite shortlists.
                 </p>
               </div>
 
-              <div className="space-y-3">
+              <div className="flex flex-wrap gap-4">
+                <a href="#matcher" className="btn-gold"><Target className="w-4 h-4" /> Try Live ATS Scanner</a>
+                <button onClick={() => setBookOpen(true)} className="btn-outline"><Calendar className="w-4 h-4" /> Book Discovery Call</button>
+              </div>
+
+              {/* Verified Trust Badges */}
+              <div className="flex flex-wrap gap-6 pt-4 border-t border-graphite-light/50">
                 {[
-                  { title: "MMS Finance", desc: "Masters in Management Studies, specialized in Finance." },
-                  { title: "Certified Cooperative Auditor", desc: "Cooperative Auditing discipline applied to corporate positioning." },
-                  { title: "500+ Transitions", desc: "Executive shortlists secured across major tech and finance hubs." },
-                  { title: "5.0★ Google Stars", desc: "Consistent, audit-backed career results." }
-                ].map((cred, i) => (
-                  <div key={i} className="glass rounded-xl p-4 flex gap-4 items-start hover:border-champagne/20 transition-colors border border-graphite-light/50">
-                    <div className="h-8 w-8 rounded-lg flex items-center justify-center bg-champagne/5 text-champagne font-mono text-[11px] border border-champagne/15">0{i+1}</div>
-                    <div>
-                      <h4 className="text-xs font-bold text-white tracking-wide">{cred.title}</h4>
-                      <p className="text-[11px] text-text-secondary mt-1">{cred.desc}</p>
-                    </div>
+                  { label: "5.0 ★ Google Rating", sub: "Verifiable Client Audits" },
+                  { label: "13+ Years Advisory", sub: "Cooperative Auditing Rigor" },
+                  { label: "500+ Placements", sub: "IT, Finance, Operations" }
+                ].map((badge, idx) => (
+                  <div key={idx} className="space-y-1">
+                    <span className="text-[12px] font-bold text-white block">{badge.label}</span>
+                    <span className="t-label text-[8px] text-text-secondary block">{badge.sub}</span>
                   </div>
                 ))}
               </div>
             </div>
+
+            {/* Right: High-end Professional Portrait */}
+            <div className="relative flex justify-center">
+              <div className="relative w-full max-w-sm" style={{ filter: "drop-shadow(0 30px 80px rgba(0,0,0,0.85))" }}>
+                <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_center,_var(--color-champagne-light),_transparent)] opacity-10 blur-xl scale-110" />
+                <div className="relative z-10 rounded-3xl overflow-hidden border border-champagne/15" style={{ aspectRatio: "4/5", background: "linear-gradient(135deg, #0A0E23, #040714)" }}>
+                  <Image src="/pooja-headshot.png" alt="Pooja Malpani" fill priority sizes="(max-width: 768px) 100vw, 400px" className="object-cover object-top" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#040714] via-transparent to-transparent opacity-80" />
+                  <div className="absolute bottom-6 left-6 right-6 glass-elevated rounded-2xl p-4 border border-champagne/15 text-center">
+                    <span className="text-[9px] font-mono text-champagne tracking-widest block">EXECUTIVE CAREER STRATEGIST</span>
+                    <span className="text-sm font-bold text-white font-display mt-0.5 block">Pooja Malpani</span>
+                    <span className="text-[10px] text-text-secondary mt-0.5 block">MMS Finance · Ex-Maharashtra Cooperative Auditor</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
 
       {/* ═══════════════════════════════════════════
-          SECTION 05: THE TRANSFORMATION ARCHIVE (Comparative Cabinets)
+          REAL INTERACTIVE ATS KEYWORD MATCHER (Teal / SkillSyncer Style)
           ═══════════════════════════════════════════ */}
-      <section id="dossier" className="section-spacing relative z-10">
+      <section id="matcher" className="section-spacing relative z-10 border-t border-graphite-light/50 bg-midnight/30">
         <div className="container-narrow space-y-12">
-          <div className="text-center max-w-xl mx-auto space-y-3">
-            <span className="t-overline text-champagne">Proven Transformations</span>
-            <h2 className="t-headline">Transformation <span className="gradient-gold">Dossiers</span>.</h2>
-            <p className="t-body text-xs">Side-by-side comparative audits of real mid-to-senior placements.</p>
+          
+          <div className="text-center max-w-2xl mx-auto space-y-3">
+            <span className="t-overline text-champagne">Algorithmic Diagnostic Tool</span>
+            <h2 className="t-headline">ATS Resume <span className="gradient-gold">Keyword Matcher</span>.</h2>
+            <p className="t-body text-xs">
+              SkillSyncer & TealHQ inspired side-by-side keyword parser. Verify how well your resume matches your target job description in real-time.
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Cabinet selector */}
-            <div className="space-y-2">
-              {MOCK_CASE_STUDIES.map((cs) => (
-                <button
-                  key={cs.id}
-                  onClick={() => setActiveDossier(cs)}
-                  className={`w-full text-left p-5 rounded-2xl border transition-all ${activeDossier.id === cs.id ? "bg-graphite/45 border-champagne" : "bg-transparent border-graphite-light/45 hover:border-white/20"}`}
+          <form onSubmit={handleAtsAnalysis} className="space-y-6">
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={loadExampleInputs}
+                className="text-[10px] font-mono text-champagne hover:text-white border border-champagne/25 hover:border-champagne rounded-lg px-3 py-1.5 transition-colors cursor-pointer"
+              >
+                ⚡ LOAD SENIOR PM AUDIT EXAMPLE
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Left Panel: Resume */}
+              <div className="glass rounded-2xl p-5 border border-graphite-light/50 space-y-3">
+                <label className="t-label text-white flex justify-between">
+                  <span>1. Your Current Resume text</span>
+                  <span className="text-text-secondary text-[8px]">PASTE EXPERIENCE OR BULLET POINTS</span>
+                </label>
+                <textarea
+                  required
+                  placeholder="Paste your resume experience section or selected bullet points here..."
+                  className="w-full rounded-xl p-4 text-[12px] text-white bg-midnight/65 border border-graphite-light/45 focus:outline-none focus:border-champagne/40 h-64 resize-none font-mono"
+                  value={resumeInput}
+                  onChange={(e) => setResumeInput(e.target.value)}
+                />
+              </div>
+
+              {/* Right Panel: Job Description */}
+              <div className="glass rounded-2xl p-5 border border-graphite-light/50 space-y-3">
+                <label className="t-label text-white flex justify-between">
+                  <span>2. Target Job Description</span>
+                  <span className="text-text-secondary text-[8px]">PASTE JD REQUIREMENTS OR SKILLS</span>
+                </label>
+                <textarea
+                  required
+                  placeholder="Paste the target job description or core requirements here..."
+                  className="w-full rounded-xl p-4 text-[12px] text-white bg-midnight/65 border border-graphite-light/45 focus:outline-none focus:border-champagne/40 h-64 resize-none font-mono"
+                  value={jdInput}
+                  onChange={(e) => setJdInput(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-center">
+              <button
+                type="submit"
+                disabled={scanning}
+                className="btn-gold px-10 py-4 justify-center text-xs tracking-wider"
+              >
+                {scanning ? (
+                  <>
+                    <div className="w-3.5 h-3.5 border-2 border-midnight border-t-transparent rounded-full animate-spin mr-2" />
+                    RUNNING AUDIT DIAGNOSTICS...
+                  </>
+                ) : (
+                  <>
+                    <Target className="w-4 h-4" /> RUN ATS DIAGNOSTIC MATCH
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+
+          {/* Real-time Diagnostics Output Section */}
+          {scanResult && (
+            <div id="ats-results" className="glass-elevated rounded-3xl p-8 border border-champagne/25 space-y-8 animate-fade-in">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 pb-6 border-b border-graphite-light/50">
+                <div>
+                  <span className="text-[10px] font-mono text-champagne tracking-widest uppercase">Diagnostic Results</span>
+                  <h3 className="text-2xl font-bold font-display text-white mt-1">Audit Scorecard</h3>
+                </div>
+                <div className="flex items-center gap-4 bg-midnight/65 border border-graphite-light/50 rounded-2xl px-6 py-4">
+                  <div>
+                    <span className="text-[9px] font-mono text-text-secondary block uppercase">Keyword Match</span>
+                    <span className="text-3xl font-bold font-display text-white mt-0.5 block">{scanResult.score}%</span>
+                  </div>
+                  <div className="w-px h-10 bg-graphite-light/50" />
+                  <div>
+                    <span className="text-[9px] font-mono text-text-secondary block uppercase">Verdict</span>
+                    <span className={`text-[10px] font-mono font-bold tracking-widest mt-0.5 block ${scanResult.score >= 70 ? "text-success" : "text-danger"}`}>
+                      {scanResult.score >= 70 ? "OPTIMIZED PROFILE" : "CRITICAL KEYWORD GAP"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Skills Overlap Breakdown */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Matching Skills */}
+                <div className="space-y-3">
+                  <span className="t-overline text-success flex items-center gap-1.5">
+                    <CheckCircle className="w-3.5 h-3.5" /> Matching Keywords ({scanResult.matchingSkills.length})
+                  </span>
+                  <div className="flex flex-wrap gap-2">
+                    {scanResult.matchingSkills.length > 0 ? (
+                      scanResult.matchingSkills.map((skill, i) => (
+                        <span key={i} className="text-[10px] font-mono font-bold px-3 py-1.5 rounded-lg bg-success/5 border border-success/20 text-success uppercase">
+                          {skill}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="text-[11px] text-text-secondary italic">No matching keywords found.</span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Missing Skills */}
+                <div className="space-y-3">
+                  <span className="t-overline text-danger flex items-center gap-1.5">
+                    <X className="w-3.5 h-3.5" /> Missing Keyword Gaps ({scanResult.missingSkills.length})
+                  </span>
+                  <div className="flex flex-wrap gap-2">
+                    {scanResult.missingSkills.length > 0 ? (
+                      scanResult.missingSkills.map((skill, i) => (
+                        <span key={i} className="text-[10px] font-mono font-bold px-3 py-1.5 rounded-lg bg-danger/5 border border-danger/25 text-danger uppercase">
+                          {skill}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="text-[11px] text-success italic">No critical missing keywords identified!</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Actionable recommendations */}
+              <div className="bg-midnight/55 rounded-2xl p-6 border border-graphite-light/50 space-y-4">
+                <span className="text-[10px] font-mono text-champagne block uppercase tracking-widest">Tactical Audit Suggestions</span>
+                <ul className="space-y-3 text-[12px] font-mono leading-relaxed">
+                  {scanResult.advice.map((adv, i) => (
+                    <li key={i} className={adv.startsWith("✓") ? "text-success" : adv.startsWith("✗") || adv.startsWith("⚠") ? "text-danger" : "text-text-secondary"}>
+                      {adv}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Pre-filled WhatsApp CTA */}
+              <div className="pt-6 border-t border-graphite-light/50 flex flex-col sm:flex-row justify-between items-center gap-4">
+                <span className="text-[11px] text-text-secondary">
+                  Send your match scorecard directly to Pooja to discuss a strategic resume rewrite.
+                </span>
+                <a
+                  href={wa(
+                    `Hi Pooja! I ran your ATS Matcher. My score is ${scanResult.score}%. My missing keyword gaps are: ${scanResult.missingSkills.join(", ")}. I'd like to discuss an optimization strategy.`
+                  )}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-gold text-xs tracking-wider justify-center w-full sm:w-auto"
                 >
-                  <span className="text-[9px] font-mono text-champagne block">{cs.industry}</span>
-                  <span className="text-sm font-semibold text-white font-display mt-1 block">{cs.name}</span>
-                </button>
-              ))}
-            </div>
-
-            {/* Cabinet dossier card */}
-            <div className="lg:col-span-2 glass-elevated rounded-3xl p-6 border border-champagne/15 grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div>
-                  <span className="text-[9px] font-mono text-text-muted block">CTC ESCALATION</span>
-                  <span className="text-xl font-bold font-display text-success mt-1 block">
-                    {activeDossier.before_ctc} → {activeDossier.after_ctc}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-[9px] font-mono text-text-muted block">TIMELINE BIND</span>
-                  <span className="text-[11px] font-semibold text-white mt-1 block">
-                    {activeDossier.timeline} Rebuild Window
-                  </span>
-                </div>
-                <div className="h-[1px] bg-graphite-light/50" />
-                <div>
-                  <span className="text-[9px] font-mono text-text-muted block">TRANSFORMATION STORY</span>
-                  <p className="text-[11px] text-text-secondary leading-relaxed mt-1">
-                    {activeDossier.story}
-                  </p>
-                </div>
-              </div>
-
-              {/* Side by side resume translation */}
-              <div className="space-y-4 bg-midnight/55 rounded-2xl p-4 border border-graphite-light/50">
-                <div>
-                  <span className="text-[9px] font-mono text-danger uppercase tracking-wider block">✗ Before Audit</span>
-                  <p className="text-[10px] font-mono text-danger/80 leading-relaxed mt-1">
-                    "{activeDossier.resume_before}"
-                  </p>
-                </div>
-                <div className="h-[1px] bg-graphite-light/50" />
-                <div>
-                  <span className="text-[9px] font-mono text-success uppercase tracking-wider block">✓ After Audit</span>
-                  <p className="text-[10px] font-mono text-success leading-relaxed mt-1">
-                    "{activeDossier.resume_after}"
-                  </p>
-                </div>
+                  <MessageSquare className="w-4 h-4" /> Forward Scorecard to Pooja
+                </a>
               </div>
             </div>
-          </div>
+          )}
+
         </div>
       </section>
 
       {/* ═══════════════════════════════════════════
-          SECTION 06: LINKEDIN AUTHORITY VISUALIZATION
+          GENUINE CORPORATE ADVISORY SERVICES
           ═══════════════════════════════════════════ */}
-      <section ref={sec6Ref} className="relative min-h-[120vh] bg-transparent">
-        <div className="absolute inset-0 sticky top-0 h-screen z-0 pointer-events-none">
-          <Suspense fallback={<SceneSkeleton />}>
-            <SceneLinkedInEngine scrollProgress={sec6Progress} />
-          </Suspense>
-        </div>
-
-        <div className="container-wide relative z-10 min-h-[120vh] flex flex-col justify-between pointer-events-none">
-          <div className="h-screen flex items-center justify-start max-w-md">
-            <div className="space-y-4">
-              <span className="t-overline text-champagne">Profile Re-assembly</span>
-              <h2 className="t-headline">LinkedIn <br /><span className="gradient-gold">Structure Assembly</span>.</h2>
-              <p className="t-body">
-                Watch how disconnected modules—headlines, skill clouds, recommendations—glide together on scroll, interlocking like blocks to charge your SSI score up to 88%.
-              </p>
-            </div>
-          </div>
-          <div className="h-[20vh]" />
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════
-          SECTION 07: THE SERVICE ECOSYSTEM
-          ═══════════════════════════════════════════ */}
-      <section id="services" className="section-spacing relative z-10" style={{ background: "linear-gradient(to bottom, #030512, transparent 50%, #030512)" }}>
+      <section id="services" className="section-spacing relative z-10">
         <div className="container-narrow space-y-12">
+          
           <div className="text-center max-w-xl mx-auto space-y-3">
-            <span className="t-overline text-champagne">Elite Programs</span>
-            <h2 className="t-headline">Consulting <br /><span className="gradient-gold">Ecosystem</span>.</h2>
-            <p className="t-body text-xs">Trademark visibility frameworks for mid-to-senior professionals.</p>
+            <span className="t-overline text-champagne">Consulting Programs</span>
+            <h2 className="t-headline">Corporate Positioning <span className="gradient-gold">Services</span>.</h2>
+            <p className="t-body text-xs">
+              Rigorous, audit-backed re-branding packages tailored for Director, VP, and C-Suite career pivots.
+            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -481,7 +404,7 @@ export default function Home() {
                     <p className="text-[10px] font-mono text-text-secondary mt-1">{svc.subtitle}</p>
                   </div>
                   <p className="text-[11px] text-text-secondary leading-relaxed">
-                    {svc.description.slice(0, 80)}...
+                    {svc.description.slice(0, 85)}...
                   </p>
                 </div>
 
@@ -498,13 +421,91 @@ export default function Home() {
       </section>
 
       {/* ═══════════════════════════════════════════
-          REVIEWS WALL & TESTIMONIALS
+          PLACEMENT DOSSIERS (Zepto, PhonePe, Salesforce)
           ═══════════════════════════════════════════ */}
-      <section className="section-spacing relative z-10">
+      <section id="stories" className="section-spacing relative z-10 border-t border-graphite-light/35 bg-midnight/10">
         <div className="container-narrow space-y-12">
+          
           <div className="text-center max-w-xl mx-auto space-y-3">
-            <span className="t-overline text-champagne">Verified Endorsements</span>
-            <h2 className="t-headline">Google & LinkedIn <br /><span className="gradient-gold">Authority Wall</span>.</h2>
+            <span className="t-overline text-champagne">Verified Outcomes</span>
+            <h2 className="t-headline">Executive Placement <span className="gradient-gold">Dossiers</span>.</h2>
+            <p className="t-body text-xs">
+              Examine the exact side-by-side CAR outcome translations executed for our C-Suite clients.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Selection Column */}
+            <div className="space-y-2">
+              {MOCK_CASE_STUDIES.map((cs) => (
+                <button
+                  key={cs.id}
+                  onClick={() => setActiveDossier(cs)}
+                  className={`w-full text-left p-5 rounded-2xl border transition-all cursor-pointer ${activeDossier.id === cs.id ? "bg-graphite/45 border-champagne" : "bg-transparent border-graphite-light/45 hover:border-white/20"}`}
+                >
+                  <span className="text-[9px] font-mono text-champagne block">{cs.industry}</span>
+                  <span className="text-sm font-semibold text-white font-display mt-1 block">{cs.name}</span>
+                </button>
+              ))}
+            </div>
+
+            {/* Comparison detail card */}
+            <div className="lg:col-span-2 glass-elevated rounded-3xl p-8 border border-champagne/15 grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-6">
+                <div>
+                  <span className="text-[9px] font-mono text-text-muted block">CTC TRANSFORMATION</span>
+                  <span className="text-2xl font-bold font-display text-success mt-1 block">
+                    {activeDossier.before_ctc} → {activeDossier.after_ctc}
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-4 border-y border-graphite-light/50 py-4">
+                  <div>
+                    <span className="text-[9px] font-mono text-text-muted block">TIMELINE</span>
+                    <span className="text-[12px] font-semibold text-white mt-0.5 block">{activeDossier.timeline}</span>
+                  </div>
+                  <div>
+                    <span className="text-[9px] font-mono text-text-muted block">LINKEDIN LINK</span>
+                    <span className="text-[12px] font-semibold text-champagne mt-0.5 block">SSI Score: 84+</span>
+                  </div>
+                </div>
+                <div>
+                  <span className="text-[9px] font-mono text-text-muted block">OUTCOME OVERVIEW</span>
+                  <p className="text-[11px] text-text-secondary leading-relaxed mt-1">
+                    {activeDossier.story}
+                  </p>
+                </div>
+              </div>
+
+              {/* Before and After resume comparison details */}
+              <div className="space-y-4 bg-midnight/55 rounded-2xl p-5 border border-graphite-light/50">
+                <div>
+                  <span className="text-[9px] font-mono text-danger uppercase tracking-wider block">✗ Before Audit (Tactical description)</span>
+                  <p className="text-[11px] font-mono text-danger/80 leading-relaxed mt-1">
+                    "{activeDossier.resume_before}"
+                  </p>
+                </div>
+                <div className="h-[1px] bg-graphite-light/50" />
+                <div>
+                  <span className="text-[9px] font-mono text-success uppercase tracking-wider block">✓ After Audit (Strategic Outcome)</span>
+                  <p className="text-[11px] font-mono text-success leading-relaxed mt-1">
+                    "{activeDossier.resume_after}"
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════
+          VERIFIABLE GOOGLE & LINKEDIN REVIEWS WALL
+          ═══════════════════════════════════════════ */}
+      <section id="reviews" className="section-spacing relative z-10">
+        <div className="container-narrow space-y-12">
+          
+          <div className="text-center max-w-xl mx-auto space-y-3">
+            <span className="t-overline text-champagne">Client Testimonials</span>
+            <h2 className="t-headline">Google & LinkedIn <br /><span className="gradient-gold">Advisory Reviews Wall</span>.</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -537,47 +538,9 @@ export default function Home() {
       </section>
 
       {/* ═══════════════════════════════════════════
-          FORBES-LEVEL EDITORIAL CENTER
+          FAQ SECTION
           ═══════════════════════════════════════════ */}
-      <section className="section-spacing relative z-10">
-        <div className="container-narrow space-y-12">
-          <div className="text-center max-w-xl mx-auto space-y-3">
-            <span className="t-overline text-champagne">Advisory Publications</span>
-            <h2 className="t-headline">The Career <br /><span className="gradient-gold">Intelligence Center</span>.</h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {MOCK_BLOGS.map((blog) => (
-              <div
-                key={blog.id}
-                onClick={() => setSelectedBlog(blog)}
-                className="glass rounded-3xl p-6 border border-graphite-light/50 flex flex-col justify-between hover:border-champagne/45 transition-colors cursor-pointer"
-              >
-                <div className="space-y-4">
-                  <span className="badge-gold text-[9px]">{blog.category}</span>
-                  <h3 className="text-lg font-bold text-white font-display hover:text-champagne transition-colors">
-                    {blog.title}
-                  </h3>
-                  <p className="text-[12px] text-text-secondary leading-relaxed">
-                    {blog.excerpt}
-                  </p>
-                </div>
-                <div className="pt-6 border-t border-graphite-light/50 mt-6 flex items-center justify-between text-[10px] font-mono text-text-muted">
-                  <span>{blog.read_time} MIN READ</span>
-                  <span className="text-champagne flex items-center gap-1">
-                    READ PUBLICATION <ArrowRight className="w-3.5 h-3.5" />
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════
-          ADVISORY FAQ
-          ═══════════════════════════════════════════ */}
-      <section id="faq" className="section-spacing relative z-10">
+      <section id="faq" className="section-spacing relative z-10 border-t border-graphite-light/35 bg-[#030512]">
         <div className="container-reading space-y-8">
           <div className="text-center space-y-3">
             <span className="t-overline text-champagne">Common Enquiries</span>
@@ -586,9 +549,9 @@ export default function Home() {
 
           <div className="space-y-3">
             {[
-              { q: "What makes your positioning method different from standard writing services?", a: "Standard services focus on vocabulary and templates. I focus on strategic auditing. I analyze structural JD parsing parameters and reverse-engineer recruiter search variables to position your experience for maximum bottom-line P&L impact." },
-              { q: "Do you offer discovery consultations?", a: "Yes. I offer a free 15-minute diagnostic call to review your current CV and discuss invisible friction points before you commit to any program." },
-              { q: "What is your standard turnaround window?", a: "Typical delivery times range from 4 business days for LinkedIn optimization up to 10-14 days for the full Professional Brand Transformation." }
+              { q: "What makes your positioning methodology different from standard writing services?", a: "Standard services focus on formatting and passive descriptions. I focus on strategic auditing. I analyze exact search parameters, structure achievements applying financial auditing rigor, and translate simple task columns into metric-backed outcomes." },
+              { q: "Can I speak to you before booking a consulting program?", a: "Yes. I offer a free 15-minute discovery consultation. We review your current CV keyword alignment and map out the exact visible friction points." },
+              { q: "What is your standard turnaround window?", a: "Typically, LinkedIn optimization takes 4 business days, and a full executive brand rewrite is completed within 10–14 days." }
             ].map((faq, idx) => (
               <div key={idx} className="glass rounded-2xl overflow-hidden border border-graphite-light/50">
                 <button
@@ -613,9 +576,9 @@ export default function Home() {
       </section>
 
       {/* ═══════════════════════════════════════════
-          FINAL CONVERSION PANEL
+          FINAL CALL TO ACTION
           ═══════════════════════════════════════════ */}
-      <section className="section-spacing relative z-10 overflow-hidden">
+      <section className="section-spacing relative z-10 overflow-hidden bg-[#030512]">
         <div className="container-narrow">
           <div
             className="relative rounded-3xl text-center px-8 py-16 md:py-24 overflow-hidden border border-champagne/20"
@@ -644,13 +607,13 @@ export default function Home() {
       {/* ═══════════════════════════════════════════
           FOOTER
           ═══════════════════════════════════════════ */}
-      <footer className="relative z-10 border-t border-champagne/10 section-spacing-sm bg-[#030512]">
+      <footer className="relative z-10 border-t border-champagne/10 section-spacing-sm bg-[#040714]">
         <div className="container-wide">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
             <div>
               <div className="flex items-center gap-3 mb-4">
                 <div className="h-9 w-9 rounded-xl flex items-center justify-center font-display text-sm text-champagne font-bold" style={{ background: "rgba(201,168,76,0.06)", border: "1px solid rgba(201,168,76,0.2)" }}>PM</div>
-                <div className="font-bold text-white uppercase tracking-wider text-xs">Pooja Malpani</div>
+                <div className="font-bold text-white uppercase tracking-wider text-xs">Pooja Malpani Advisory</div>
               </div>
               <p className="text-[11px] text-text-secondary leading-relaxed max-w-xs">
                 Executive Career Strategist. Applying cooperative auditing rigor to executive personal branding in IT, Finance, and Operations across India.
@@ -659,7 +622,12 @@ export default function Home() {
             <div>
               <div className="t-overline mb-4 text-[9px]">Navigational Links</div>
               <div className="space-y-2.5">
-                {[["#invisible", "Filtration"], ["#network", "Placement Network"], ["#grader", "ATS Grader"], ["#dossier", "Transformation Archive"], ["#services", "Consulting Programs"]].map(([h, l]) => (
+                {[
+                  ["#matcher", "ATS Matcher"],
+                  ["#services", "Consulting Programs"],
+                  ["#stories", "Placement Dossiers"],
+                  ["#reviews", "Verifiable Reviews"]
+                ].map(([h, l]) => (
                   <a key={h} href={h} className="block text-[11px] text-text-secondary hover:text-white transition-colors">{l}</a>
                 ))}
               </div>
@@ -685,7 +653,7 @@ export default function Home() {
               {[1, 2, 3, 4, 5].map((s) => (
                 <Star key={s} className="w-3 h-3 star-gold" />
               ))}
-              <span className="t-label text-[9px] ml-2">5.0 · verified Client Audits</span>
+              <span className="t-label text-[9px] ml-2">5.0 · Google Verified Client Reviews</span>
             </div>
           </div>
         </div>
@@ -694,10 +662,9 @@ export default function Home() {
       {/* ═══════════════════════════════════════════
           MODAL: SERVICE ECOSYSTEM DRAWER
           ═══════════════════════════════════════════ */}
-      <AnimatePresence>
         {selectedService && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[60] flex items-center justify-center p-4" style={{ background: "rgba(3,5,18,0.85)", backdropFilter: "blur(20px)" }} onClick={(e) => e.target === e.currentTarget && setSelectedService(null)} data-lenis-prevent>
-            <motion.div initial={{ scale: 0.95, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 20 }} className="w-full max-w-2xl glass-elevated rounded-3xl p-8 relative border border-champagne/20 max-h-[90vh] overflow-y-auto scrollbar-none">
+          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4" style={{ background: "rgba(3,5,18,0.85)", backdropFilter: "blur(20px)" }} onClick={(e) => e.target === e.currentTarget && setSelectedService(null)}>
+            <div className="w-full max-w-2xl glass-elevated rounded-3xl p-8 relative border border-champagne/20 max-h-[90vh] overflow-y-auto scrollbar-none" onClick={(e) => e.stopPropagation()}>
               <button onClick={() => setSelectedService(null)} className="absolute top-6 right-6 w-8 h-8 rounded-full flex items-center justify-center text-text-secondary hover:text-white bg-graphite/40 border border-graphite-light/45 cursor-pointer">
                 <X className="w-4 h-4" />
               </button>
@@ -746,73 +713,16 @@ export default function Home() {
                   Close Program Review
                 </button>
               </div>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         )}
-      </AnimatePresence>
-
-      {/* ═══════════════════════════════════════════
-          MODAL: EDITORIAL ARTICLE DRAWER
-          ═══════════════════════════════════════════ */}
-      <AnimatePresence>
-        {selectedBlog && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[60] flex items-center justify-center p-4" style={{ background: "rgba(3,5,18,0.85)", backdropFilter: "blur(20px)" }} onClick={(e) => e.target === e.currentTarget && setSelectedBlog(null)} data-lenis-prevent>
-            <motion.div initial={{ scale: 0.95, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 20 }} className="w-full max-w-2xl glass-elevated rounded-3xl p-8 relative border border-champagne/20 max-h-[90vh] overflow-y-auto scrollbar-none">
-              <button onClick={() => setSelectedBlog(null)} className="absolute top-6 right-6 w-8 h-8 rounded-full flex items-center justify-center text-text-secondary hover:text-white bg-graphite/40 border border-graphite-light/45 cursor-pointer">
-                <X className="w-4 h-4" />
-              </button>
-
-              <div className="mb-6 space-y-2">
-                <span className="badge-gold text-[9px]">{selectedBlog.category}</span>
-                <h3 className="t-title text-2xl md:text-3xl font-bold">{selectedBlog.title}</h3>
-                <span className="text-[10px] font-mono text-text-muted block pt-2">{selectedBlog.read_time} MIN READ</span>
-              </div>
-
-              <div className="prose prose-invert max-w-none text-sm text-text-secondary leading-relaxed space-y-4">
-                {/* Parse Markdown content */}
-                {selectedBlog.content.split("\n\n").map((para, i) => {
-                  if (para.startsWith("# ")) {
-                    return null; // Skip duplicate title
-                  }
-                  if (para.startsWith("## ")) {
-                    return (
-                      <h4 key={i} className="text-base font-bold text-white font-display pt-4">
-                        {para.replace("## ", "")}
-                      </h4>
-                    );
-                  }
-                  if (para.startsWith("* ")) {
-                    return (
-                      <ul key={i} className="space-y-1 pl-4">
-                        {para.split("\n").map((li, liIdx) => (
-                          <li key={liIdx} className="list-disc list-outside text-text-secondary">
-                            {li.replace("* ", "")}
-                          </li>
-                        ))}
-                      </ul>
-                    );
-                  }
-                  return <p key={i}>{para}</p>;
-                })}
-              </div>
-
-              <div className="pt-8 border-t border-graphite-light/50 mt-8">
-                <button onClick={() => setSelectedBlog(null)} className="btn-gold w-full justify-center">
-                  Close Article Reading
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* ═══════════════════════════════════════════
           MODAL: BOOKING SCHEDULER
           ═══════════════════════════════════════════ */}
-      <AnimatePresence>
         {bookOpen && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[60] flex items-center justify-center p-4" style={{ background: "rgba(3,5,18,0.85)", backdropFilter: "blur(20px)" }} onClick={(e) => e.target === e.currentTarget && setBookOpen(false)} data-lenis-prevent>
-            <motion.div initial={{ scale: 0.95, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 20 }} className="w-full max-w-md glass-elevated rounded-3xl p-8 relative border border-champagne/20" data-lenis-prevent>
+          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4" style={{ background: "rgba(3,5,18,0.85)", backdropFilter: "blur(20px)" }} onClick={(e) => e.target === e.currentTarget && setBookOpen(false)}>
+            <div className="w-full max-w-md glass-elevated rounded-3xl p-8 relative border border-champagne/20" onClick={(e) => e.stopPropagation()}>
               <button onClick={() => setBookOpen(false)} className="absolute top-6 right-6 w-8 h-8 rounded-full flex items-center justify-center text-text-secondary hover:text-white bg-graphite/40 border border-graphite-light/45 cursor-pointer">
                 <X className="w-4 h-4" />
               </button>
@@ -849,11 +759,10 @@ export default function Home() {
               <a href={wa("Hi Pooja! I'd like to book a free discovery call.")} target="_blank" rel="noopener noreferrer" className="btn-gold w-full justify-center">
                 <MessageSquare className="w-4 h-4" /> Confirm Booking on WhatsApp
               </a>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         )}
-      </AnimatePresence>
-      
+
     </div>
   );
 }

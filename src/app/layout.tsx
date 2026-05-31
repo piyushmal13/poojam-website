@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import { Instrument_Serif, Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
-import { LenisProvider } from "@/providers/LenisProvider";
-import CustomCursor from "@/components/CustomCursor";
 import "./globals.css";
 
 const instrumentSerif = Instrument_Serif({
@@ -71,11 +69,8 @@ export default function RootLayout({
       lang="en"
       className={`${instrumentSerif.variable} ${plusJakartaSans.variable} ${jetBrainsMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
-        <LenisProvider>
-          <CustomCursor />
-          {children}
-        </LenisProvider>
+      <body className="min-h-full flex flex-col bg-[#030512]">
+        {children}
       </body>
     </html>
   );
