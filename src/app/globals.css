@@ -13,9 +13,9 @@
   --color-bg-glass:      rgba(255, 255, 255, 0.7);
   
   /* ── Border Colors ── */
-  --color-border-subtle: rgba(0, 0, 0, 0.06);
-  --color-border-hover:  rgba(0, 0, 0, 0.15);
-  --color-border-active: rgba(201, 168, 76, 0.5);
+  --color-border-subtle: rgba(0, 0, 0, 0.08);
+  --color-border-hover:  rgba(0, 0, 0, 0.18);
+  --color-border-active: rgba(201, 168, 76, 0.6);
 
   /* ── Accent: Luxury Gold ── */
   --color-accent:        #C9A84C;
@@ -24,17 +24,18 @@
 
   /* ── Text Hierarchy ── */
   --color-text-primary:  #111827; /* Near Black */
-  --color-text-secondary:#4B5563; /* Slate */
-  --color-text-muted:    #9CA3AF; /* Gray */
+  --color-text-secondary:#374151; /* Dark Graphite */
+  --color-text-muted:    #6B7280; /* Neutral Gray (Higher Contrast) */
 
   /* ── Semantic ── */
-  --color-success:       #059669;
-  --color-success-bg:    #D1FAE5;
-  --color-danger:        #DC2626;
+  --color-success:       #047857; /* Deep Emerald */
+  --color-success-bg:    #ECFDF5;
+  --color-danger:        #B91C1C; /* Dark Red */
+  --color-danger-bg:     #FEF2F2;
 
   /* ── Typography ── */
-  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
-  --font-mono: "JetBrains Mono", monospace;
+  --font-sans: var(--font-body), "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-mono), "JetBrains Mono", monospace;
 }
 
 /* ================================================================
@@ -83,16 +84,29 @@
 }
 
 /* ================================================================
-   LAYOUT
+   LAYOUT & UTILITIES
    ================================================================ */
 .container-main {
   max-width: 1200px;
   margin-inline: auto;
-  padding-inline: clamp(1rem, 4vw, 2.5rem); /* Tighter on mobile */
+  padding-inline: clamp(1rem, 4vw, 2.5rem);
 }
 
 .section-padding {
-  padding-block: clamp(3rem, 6vw, 6rem); /* Reduced padding for mobile */
+  padding-block: clamp(3rem, 6vw, 6rem);
+}
+
+/* 3D Perspective Utilities */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
 }
 
 /* ================================================================
@@ -145,14 +159,13 @@
   color: var(--color-accent);
 }
 
-/* 3D Text Hook */
+/* Refined Premium 3D Text Shadow */
 .text-3d {
   text-shadow: 
     1px 1px 0px #E5E7EB,
     2px 2px 0px #E5E7EB,
     3px 3px 0px #D1D5DB,
-    4px 4px 0px #D1D5DB,
-    5px 5px 15px rgba(0,0,0,0.1);
+    4px 4px 10px rgba(0,0,0,0.06);
 }
 
 /* ================================================================
@@ -161,18 +174,18 @@
 .bento-grid {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
-  gap: 1rem; /* Tighter gap for mobile */
+  gap: 1rem;
 }
 
 .bento-card {
   background: var(--color-bg-base);
   border: 1px solid var(--color-border-subtle);
   border-radius: 1.25rem;
-  padding: 1.5rem; /* Reduced padding for mobile */
+  padding: 1.5rem;
   position: relative;
   overflow: hidden;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.01);
 }
 @media (min-width: 768px) {
   .bento-card { padding: 2rem; }
@@ -181,7 +194,7 @@
 .bento-card:hover {
   border-color: var(--color-border-hover);
   transform: translateY(-2px);
-  box-shadow: 0 10px 40px -10px rgba(0,0,0,0.08);
+  box-shadow: 0 12px 40px -10px rgba(0,0,0,0.06);
 }
 
 .bento-card-interactive {
@@ -211,7 +224,7 @@
 }
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
 }
 
 .btn-secondary {
@@ -292,17 +305,17 @@
   filter: blur(80px);
   pointer-events: none;
   z-index: 0;
-  opacity: 0.4;
+  opacity: 0.3;
 }
 
 @keyframes float {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+  50% { transform: translateY(-8px); }
 }
 
 @keyframes pulse-soft {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 0.6; }
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 0.4; }
 }
 
 @keyframes marquee {
@@ -322,7 +335,7 @@
 
 .marquee-content {
   display: flex;
-  animation: marquee 20s linear infinite;
+  animation: marquee 25s linear infinite;
 }
 .marquee-content:hover {
   animation-play-state: paused;

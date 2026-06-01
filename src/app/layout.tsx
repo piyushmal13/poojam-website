@@ -60,6 +60,7 @@ export const metadata: Metadata = {
 };
 
 import { LenisProvider } from "@/providers/LenisProvider";
+import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 
 export default function RootLayout({
   children,
@@ -71,7 +72,8 @@ export default function RootLayout({
       lang="en"
       className={`${instrumentSerif.variable} ${plusJakartaSans.variable} ${jetBrainsMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[#030512]">
+      <body className="min-h-full flex flex-col bg-white text-[#111827]">
+        <GoogleAnalytics />
         <LenisProvider>
           {children}
         </LenisProvider>
